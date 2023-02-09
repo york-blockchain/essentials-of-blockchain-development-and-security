@@ -92,18 +92,110 @@
 
 </script></section>
 
-
 <section data-markdown><script type="text/template">
 
-## Class Plan
-* 
+*"electronic digital documents are so easy to tamper with, and the change need not leave any telltale sign on the physical medium. What is needed is a method of time-stamping digital documents with the following two properties. First, we must find a way to time-stamp the data itself, without any reliance on the characteristics of the medium on which the data appears, so that it is impossible to change even one bit of the document without the change being apparent. Second, it should be impossible to stamp a document with a time and data different from the actual one"* - Haber, Stornetta (1991)
 </script></section>
 
 
 <section data-markdown><script type="text/template">
 
-## References
-* 
+## History Of Blockchain
+* Bitcoin white paper by Satoshi Nakamoto in 2009
+* Notable additions: Incentive layer and Proof-of-work consensus
+* Ethereum white paper by Vitalik Buterin in 2013, extending Bitcoin with a state machine model
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Money
+* Bartering
+* Agreed upon unit of value
+* Economic definitions Of Currency backing in 1900 - 1999 :
+ * Gold standard  ~ 1945
+ * Bretton - Woods ~ 1975
+ * ?? (2020)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bitcoin
+* Currency : History of transactions!
+* It takes "work" to update and maintain the ledger
+* Miners are incentivized to put in the "work" with rewards
+ * There is a limit of 21mn Bitcoins that can exist
+ * Halving: works as a synthetic central bank
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain
+
+![blockchain](./blockchain.jpeg)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: Transactions
+* PKI
+* Bitcoin Address
+* Sender, Amount, Receiver
+* UTXO: Unspent Transaction Output
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Header: Hash
+* Unique fingerprint of this block
+* Combines various other parts of the block to ensure uniqueness
+* Each block stores the previous block's hash, and uses it to compute its own hash
+* Transactions can be hashed sequentially but there's a better way 
+ * Merkle Trees next week
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Block Header: Proof-of-Work
+* A quick primer on SHA and hashing: 
+* Serves as a fingerprint
+ * Pseudorandom bit generator
+ * 2^128≈3.6×10^13 years. In comparison, our universe is only about 13.7×10^9 years old
+* Setting expectations on SHA is the basis of PoW 
+ * As we saw, very difficult to compute
+ * However, very easy to verify!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Header : Others stuff
+* Timestamp; this is what Haber and Stornetta wanted to solve
+* Block height, which is the index of the block
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: UTXO
+* How did Bitcoin start from the first block? 
+ * Satoshi gave people BTC
+ * Miners received block rewards
+* What happens after
+ * Value moves around in txs
+ * Only unspent outputs are tracked
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+15 minute break
 
 </script></section>
 
