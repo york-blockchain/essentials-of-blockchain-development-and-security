@@ -199,6 +199,158 @@
 
 </script></section>
 
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: UTXO
+
+![](./transaction.png)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: UTXO
+
+* A transaction Output consists of a cryptographic lock and a value. For now, you can imagine that the outputs are somehow locked and the input provides a key to unlock them. The value is simply the amount in satoshis (1 sat = 10^-8 BTC) that is locked inside the output.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: UTXO
+
+* Every Transaction input consists of a pointer and an unlocking key. The pointer points back to a previous transaction output. And the key is used to unlock the previous output it points to. Every time an output is successfully unlocked by an input, it is marked inside the blockchain database as “spent”.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Block Contents: UTXO
+
+![](./transaction1.png) 
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Genesis Block
+
+* The first block in the chain is termed as the genesis block
+* It contains all the initialization parameters for the rest of the chain
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Genesis Block
+
+![](genesis.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Addresses and Keys
+
+* If you own some Bitcoin, you will possess the following:
+ * A public key: Used to verify your transactions on the blockchain; used to generate the bitcoin address
+ * A private key: Required for you to execute transfer of funds from your account
+ * A bitcoin address: Represents your Bitcoins; others can send/receive funds via your address
+* A Bitcoin wallet generally is just a manager for your keys - this is why you need to control your keys!!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Conflicts
+
+* What if there are multiple miners that solve a PoW problem simultaneously?
+* Unlikely but not impossible
+* This leads to a fork. Multiple blocks could be added to all the subchains in the fork
+* We need a mechanism to decide between forks
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The longest Chain Rule
+
+* The chain with "the most work" is always favored by the network
+* That is to say, if there are multiple chains in a fork, the one with the most subsequent work will win
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The longest Chain Rule
+
+![](longest-chain.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## 51% Attack
+
+* How can an attacker control the Bitcoin blockchain? The rewards are surely lucrative...
+* Bitcoin consensus is based on the largest amount of work in a chain
+* Why not just get a ton of computers and just make a chain that must be accepted?
+* This is very hard as they'd need to put in work to change this history as well as change the current chain WHILE non-malicious peers are still mining
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Double Spend
+
+* What happens if a user tries to cheat the system?
+* They can send Bitcoin to another person and then make a simultaneous
+transaction for the same amount to an address they control
+* Transactions sit in the mempool while they are waiting to be mined into a block
+* If they don't have enough hashing power, either transaction gets accepted and they have no choice but to accept
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Double Spend
+
+* However, if they do have enough hashing power...
+* They can buy something like a nice car while they're accumulating blocks 
+* Finally, after they buy the car they can reverse the transaction
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Double Spend
+
+![](double-spend.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Hard Fork
+
+* Miners can disagree about consensus/scalability/etc.
+* If the sentiment is strong enough, groups of them work together to create a new fork that is a hard fork
+* These cannot be reconciled with the new blocks on the "main chain"
+* Biggest example: BTC and Bitcoin Cash 
+* Others: Bitcoin SV, Bitcoin Gold, ...
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Hard Fork
+
+![](hardfork.png)
+
+</script></section>
+
 <section data-markdown><script type="text/template">
 
 ## End of Class
