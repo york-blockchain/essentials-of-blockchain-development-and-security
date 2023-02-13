@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Distributed ledger Technology as an Abstraction of Blockchain</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 2: Distributed ledger Technology as an Abstraction of Blockchain
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* Bitcoin is a cryptocurrency, backed by a distributed ledger
+* The Bitcoin blockchain uses PoW consensus
+* Miners are incentivized to maintain the ledger by miner fees + block rewards (as long as they last)
+* Blockchains can be controlled by miner(s) who have more hashing power than the rest of the network
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class plan
+
+* We'll look at the blockchain as a state machine
+* Understand quirks of the Ethereum ecosystem
+* More consensus models
+* Separate DLT from blockchain
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum
+
+* Ethereum was developed by Vitalik Buterin in 2013 with a goal of building decentralized applications
+• Buterin argued that Bitcoin and blockchain could benefit from other applications besides money and needed a scripting language for applications besides money and needed a scripting language for application development that could lead to attaching real-world assets such as stocks and property, to the blockchain.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## State
+
+* A program’s state is the collection of events and interactions during the program lifecycle that it stores in some retrievable format
+* To bring this to blockchain, the transaction data that is stored on the ledger is the state of the ledger
+* Ethereum Whitepaper (2013): **"The "state" in Bitcoin is the collection of all coins (technically, "unspent transaction outputs" or UTXO) that have been mined and not yet spent, with each UTXO having a denomination and an owner**
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## State
+
+* Vitalik wanted a blockchain that took the concept of state more generally
+* Specifically, he wanted for the blockchain state to store arbitrary information
+• This way, one could run an app that stores crucial state information on the blockchain as opposed to just UTXO information
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## State Machine
+
+* A state machine describes the lifecycle of a system by defining every possible state it can have (based on its variables) as well as every possible state transition
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## State Machine
+
+![](./state-machine.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum State Machine
+
+* The Ethereum state machine operates with this underlying principle
+* The Genesis block is hence equivalent to a blank state
+* Anyone can deploy applications that write content to the Ethereum blockchain, represented as transactions
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum State Machine
+
+![](./ethereum-state-machine.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The Ethereum Virtual Machine
+
+* We have developed this concept of the Ethereum state machine, it is formally known as the EVM
+* It is a "Virtual Machine" as the Ethereum state machine has its own opcodes (just like x86 and ARM/RISC-V)
+* This is because apps write arbitrary data onto the Ethereum blockchain, we need a common data format
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Smart Contracts
+
+* You might have heard of the term smart contract in blockchain; this is actually just an EVM state transition!
+* Since we have a Virtual Machine with its own bytecode, apps need to convert instructions that they want on the blockchain
+* That's why Ethereum developers created a new language: Solidity
+* You can describe the logic of "on-chain" state and state transitions using this abstract language
+* This gets compiled into EVM opcodes so that they can modify the EVM state
+* More to come on Thursday
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum Consensus : GHOST
+
+* "Greedy Heaviest Observed Subtree"
+* Lots of wasted computation in BTC blockchain
+* Ethereum Whitepaper (2013): **"if miner A mines a block and then miner B happens to mine another block before miner A's block propagates to B, miner B's block will end up wasted and will not contribute to network security"**
+* Ethereum initially used PoW, now PoS
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum Consensus : GHOST
+
+![](./ethereum-consensus-ghost.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum Consensus : GHOST
+
+* Eth WP: "GHOST solves the first issue of network security loss by including stale blocks in the calculation of which chain is the "longest"; that is to say, not just the parent and further ancestors of a block, but also the stale descendants of the block's ancestor (in Ethereum jargon, "uncles") are added to the calculation of which block has the largest total proof of work backing it"
+* Further, the "uncle" and "nephew" blocks also receive a portion of the block reward
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Gas Costs
+
+* Storing data on the blockchain is expensive
+ * Big computational cost for PoW
+ * Data is immutable, stored forever
+* Every opcode incurred in a state transition of the EVM has a cost represented by "gas"
+ * 1 opcode is roughly 1 gas
+ * Gas prices are denoted in Gwei, which itself is a denomination of ETH - each Gwei is equal to 0.000000001 ETH (10-9 ETH).
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Gas Costs
+* In blockchains, the miner fee scales with the size of data intended to be stored on the ledger
+* As a result, large data (e.g. files) are not directly stored on the blockchain. Rather, a hash is stored on the chain and the data is stored in an immutable, highly available content storage (e.g. Ethereum Swarm) which is typically decentralized
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cons of PoW
+* PoW is highly computationally expensive, hence terrible for the environment
+* Another pitfall is that it can be quite insecure; with small networks it can (and has been multiple times) be exploited via a 51% attack
+* 
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cons of PoW
+
+![](btc-emission-news.png)
+![](btc-gold.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cons of PoW
+* Plus, it's not really that decentralized
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cons of PoW
+
+![](miner-pie-chart.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Proof of Stake
+* Proof of Stake serves as a simple modification over PoW that solves these problems
+* PoS allows for miners to get a block reward proportional to the amount of currency that they already own
+* This way, instead of utilizing energy to answer PoW puzzles, a PoS miner is limited to mining a percentage of transactions that is reflective of his or her ownership stake. For instance, a miner who owns 3% of the Bitcoin available can theoretically mine only 3% of the blocks.
+* More hashing power != more mining rewards
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum 2.0: Casper, the Friendly GHOST
+
+* In Ethereum's Proof-of-Stake, the concept of mining is done away with
+* Instead, Ether holders who are running a validator node are able to place bets with their Ether
+* Each bet represents which block they think will be mined next
+* If their bet is correct, they get their stake back plus the block reward 
+* If they are incorrect, they just get their stake back
+* This new system is called the "Beacon Chain"
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Nothing at Stake Problem
+* However, validators do not have anything at stake when the network forks; they can simply bet on all the forked chains since they have no incentive mechanism to choose
+* Some versions of Casper punish users who engage in such behaviour as it can lead to lack of protection against double spend
+* Casper is still in development and the rollout is an ongoing process
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Validator Shuffling
+* Validators can be malicious; the Beacon Chain protects against this by assigning validators to commitees
+* Commitees make decisions on blocks and Casper ensures that all validators are randomly distributed in such a way that "committees are more or less an accurate statistical representation of the overall validator set"
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Validator Shuffling
+
+![](validator-shuffling.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain wars
+
+![](pct-tmc.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain wars
+
+![](race-chart.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain wars
+
+![](blockchain-proj.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain wars
+
+![](equity-funding.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Other Consensus Models
+* DPoS
+* PoST
+* Iota
+* Avalanche 
+* Tendermint
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Delegated PoS
+
+![](dpos.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Proof Of Spacetime
+
+![](proof-of-spacetime.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Proof Of Spacetime
+
+* "The idea of proof-of-capacity is to require network participants to demonstrate a financial interest in the success of the network by allocating some form of memory or disk space towards it"
+* Miners have to "seal" data that enters the network and periodically have to "prove" they have the data
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Avalanche
+
+![](avalanche-consensus.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Tendermint
+
+* Tendermint is software for securely and consistently replicating an application on many machine
+ * works even if up to 1/3 of machines fail in arbitrary ways
+ * every non-faulty machine sees the same transaction log and computes the same state
+* The ability to tolerate machines failing in arbitrary ways, including becoming malicious, is known as Byzantine fault tolerance (BFT)
+* BFT theory is pretty old (late 1970s)
+* Blockchain technology is just a reformalization of BFT in a more modern setting
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Byzantine Generals Problem
+
+* Coordination required for system to work
+
+![](byzantine.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Tendermint
+
+* Bitcoin is a cryptocurrency blockchain where each node maintains a fully audited Unspent Transaction Output (UTXO) database. If one wanted to create a Bitcoin-like system on top of ABCI, Tendermint Core would be responsible for
+ * Sharing blocks and transactions between nodes
+ * Establishing a canonical/immutable order of transactions (the blockchain)
+* The application will be responsible for 
+ * Maintaining the UTXO database
+ * Validating cryptographic signatures of transactions
+ * Preventing transactions from spending non-existent transactions 
+ * Allowing clients to query the UTXO database.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
