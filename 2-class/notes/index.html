@@ -107,10 +107,21 @@
 
 ## Class plan
 
-* We'll look at the blockchain as a state machine
-* Understand quirks of the Ethereum ecosystem
-* More consensus models
-* Separate DLT from blockchain
+* Blockchain as a state machine
+* Understand peculiarities of the Ethereum ecosystem
+* Different consensus models
+* Contrast DLT from blockchain
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain Definition
+
+* A blockchain is a “cryptographically secure transactional singleton machine with shared-state.”
+  * Cryptographically secure
+  * Transactional singleton machine
+  * With shared-state
 
 </script></section>
 
@@ -119,7 +130,7 @@
 ## Ethereum
 
 * Ethereum was developed by Vitalik Buterin in 2013 with a goal of building decentralized applications
-• Buterin argued that Bitcoin and blockchain could benefit from other applications besides money and needed a scripting language for applications besides money and needed a scripting language for application development that could lead to attaching real-world assets such as stocks and property, to the blockchain.
+* Buterin argued that Bitcoin and blockchain could benefit from other applications besides money and needed a scripting language for application development that could lead to attaching real-world assets such as stocks and property, to the blockchain.
 
 </script></section>
 
@@ -127,9 +138,9 @@
 
 ## State
 
-* A program’s state is the collection of events and interactions during the program lifecycle that it stores in some retrievable format
+* A program’s state is the collection of events and interactions during the program lifecycle that it stored in some retrievable format
 * To bring this to blockchain, the transaction data that is stored on the ledger is the state of the ledger
-* Ethereum Whitepaper (2013): **"The "state" in Bitcoin is the collection of all coins (technically, "unspent transaction outputs" or UTXO) that have been mined and not yet spent, with each UTXO having a denomination and an owner**
+* *"The "state" in Bitcoin is the collection of all coins (technically, "unspent transaction outputs" or UTXO) that have been mined and not yet spent, with each UTXO having a denomination and an owner"* - Ethereum Whitepaper
 
 </script></section>
 
@@ -139,7 +150,7 @@
 
 * Vitalik wanted a blockchain that took the concept of state more generally
 * Specifically, he wanted for the blockchain state to store arbitrary information
-• This way, one could run an app that stores crucial state information on the blockchain as opposed to just UTXO information
+* This way, one could run an app that stores crucial state information on the blockchain as opposed to just UTXO information
 
 </script></section>
 
@@ -148,7 +159,7 @@
 ## State Machine
 
 * A state machine describes the lifecycle of a system by defining every possible state it can have (based on its variables) as well as every possible state transition
-
+* In computer science, a state machine refers to something that will read a series of inputs and, based on those inputs, will transition to a new state.
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -191,12 +202,11 @@
 
 ## Smart Contracts
 
-* You might have heard of the term smart contract in blockchain; this is actually just an EVM state transition!
+* It is actually just an EVM state transition!
 * Since we have a Virtual Machine with its own bytecode, apps need to convert instructions that they want on the blockchain
 * That's why Ethereum developers created a new language: Solidity
 * You can describe the logic of "on-chain" state and state transitions using this abstract language
 * This gets compiled into EVM opcodes so that they can modify the EVM state
-* More to come on Thursday
 
 </script></section>
 
@@ -206,7 +216,7 @@
 
 * "Greedy Heaviest Observed Subtree"
 * Lots of wasted computation in BTC blockchain
-* Ethereum Whitepaper (2013): **"if miner A mines a block and then miner B happens to mine another block before miner A's block propagates to B, miner B's block will end up wasted and will not contribute to network security"**
+*  *"if miner A mines a block and then miner B happens to mine another block before miner A's block propagates to B, miner B's block will end up wasted and will not contribute to network security"* - Ethereum Whitepaper
 * Ethereum initially used PoW, now PoS
 </script></section>
 
@@ -222,7 +232,7 @@
 
 ## Ethereum Consensus : GHOST
 
-* Eth WP: "GHOST solves the first issue of network security loss by including stale blocks in the calculation of which chain is the "longest"; that is to say, not just the parent and further ancestors of a block, but also the stale descendants of the block's ancestor (in Ethereum jargon, "uncles") are added to the calculation of which block has the largest total proof of work backing it"
+* *"GHOST solves the first issue of network security loss by including stale blocks in the calculation of which chain is the "longest"; that is to say, not just the parent and further ancestors of a block, but also the stale descendants of the block's ancestor (in Ethereum jargon, "uncles") are added to the calculation of which block has the largest total proof of work backing it"* - Ethereum Whitepaper
 * Further, the "uncle" and "nephew" blocks also receive a portion of the block reward
 </script></section>
 
@@ -235,14 +245,14 @@
  * Data is immutable, stored forever
 * Every opcode incurred in a state transition of the EVM has a cost represented by "gas"
  * 1 opcode is roughly 1 gas
- * Gas prices are denoted in Gwei, which itself is a denomination of ETH - each Gwei is equal to 0.000000001 ETH (10-9 ETH).
+ * Gas prices are denoted in Gwei, which itself is a denomination of ETH - each Gwei is equal to 0.000000001 ETH (10<sup>-9</sup> ETH).
 </script></section>
 
 <section data-markdown><script type="text/template">
 
 ## Gas Costs
 * In blockchains, the miner fee scales with the size of data intended to be stored on the ledger
-* As a result, large data (e.g. files) are not directly stored on the blockchain. Rather, a hash is stored on the chain and the data is stored in an immutable, highly available content storage (e.g. Ethereum Swarm) which is typically decentralized
+* As a result, large data (e.g. files) are not directly stored on the blockchain. Rather, a hash is stored on the chain and the data is stored in an immutable, highly available content storage (e.g. Ethereum Swarm, IPFS) which is typically decentralized
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -250,15 +260,14 @@
 ## Cons of PoW
 * PoW is highly computationally expensive, hence terrible for the environment
 * Another pitfall is that it can be quite insecure; with small networks it can (and has been multiple times) be exploited via a 51% attack
-* 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
 ## Cons of PoW
 
-![](btc-emission-news.png)
-![](btc-gold.png)
+<img src="btc-emission-news.png" width="400">
+<img src="btc-gold.png" width="500">
 
 </script></section>
 
@@ -279,9 +288,21 @@
 
 <section data-markdown><script type="text/template">
 
+## 15 minute break
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
 ## Proof of Stake
 * Proof of Stake serves as a simple modification over PoW that solves these problems
 * PoS allows for miners to get a block reward proportional to the amount of currency that they already own
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Proof of Stake
 * This way, instead of utilizing energy to answer PoW puzzles, a PoS miner is limited to mining a percentage of transactions that is reflective of his or her ownership stake. For instance, a miner who owns 3% of the Bitcoin available can theoretically mine only 3% of the blocks.
 * More hashing power != more mining rewards
 
@@ -289,12 +310,19 @@
 
 <section data-markdown><script type="text/template">
 
-## Ethereum 2.0: Casper, the Friendly GHOST
+## Ethereum 2.0: Gasper, the Friendly GHOST
 
-* In Ethereum's Proof-of-Stake, the concept of mining is done away with
-* Instead, Ether holders who are running a validator node are able to place bets with their Ether
+* In Ethereum's Proof-of-Stake is done with the concept of mining
+* Instead, ETH holders who are running a validator node are able to place bets with their Ether
 * Each bet represents which block they think will be mined next
 * If their bet is correct, they get their stake back plus the block reward 
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum 2.0: Gasper, the Friendly GHOST
+
 * If they are incorrect, they just get their stake back
 * This new system is called the "Beacon Chain"
 
@@ -304,8 +332,8 @@
 
 ## Nothing at Stake Problem
 * However, validators do not have anything at stake when the network forks; they can simply bet on all the forked chains since they have no incentive mechanism to choose
-* Some versions of Casper punish users who engage in such behaviour as it can lead to lack of protection against double spend
-* Casper is still in development and the rollout is an ongoing process
+* Some versions of Gasper punish users who engage in such behavior as it can lead to lack of protection against double spend
+* Gasper is still in development and the rollout is an ongoing process
 
 </script></section>
 
@@ -313,7 +341,7 @@
 
 ## Validator Shuffling
 * Validators can be malicious; the Beacon Chain protects against this by assigning validators to commitees
-* Commitees make decisions on blocks and Casper ensures that all validators are randomly distributed in such a way that "committees are more or less an accurate statistical representation of the overall validator set"
+* Committees make decisions on blocks and Gasper ensures that all validators are randomly distributed in such a way that "committees are more or less an accurate statistical representation of the overall validator set"
 
 </script></section>
 
@@ -321,7 +349,14 @@
 
 ## Validator Shuffling
 
-![](validator-shuffling.png)
+<img src="validator-shuffling.png" width="600">
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain wars
+
+<img src="pct-tmc.png" width="600">
 
 </script></section>
 
@@ -329,7 +364,7 @@
 
 ## Blockchain wars
 
-![](pct-tmc.png)
+<img src="race-chart.png" width="600">
 
 </script></section>
 
@@ -337,7 +372,7 @@
 
 ## Blockchain wars
 
-![](race-chart.png)
+![](blokchain-proj.png)
 
 </script></section>
 
@@ -345,15 +380,7 @@
 
 ## Blockchain wars
 
-![](blockchain-proj.png)
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-## Blockchain wars
-
-![](equity-funding.png)
+<img src="equity-funding.png" width="600">
 
 </script></section>
 
@@ -409,6 +436,13 @@
  * works even if up to 1/3 of machines fail in arbitrary ways
  * every non-faulty machine sees the same transaction log and computes the same state
 * The ability to tolerate machines failing in arbitrary ways, including becoming malicious, is known as Byzantine fault tolerance (BFT)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Tendermint
+
 * BFT theory is pretty old (late 1970s)
 * Blockchain technology is just a reformalization of BFT in a more modern setting
 
@@ -431,11 +465,18 @@
 * Bitcoin is a cryptocurrency blockchain where each node maintains a fully audited Unspent Transaction Output (UTXO) database. If one wanted to create a Bitcoin-like system on top of ABCI, Tendermint Core would be responsible for
  * Sharing blocks and transactions between nodes
  * Establishing a canonical/immutable order of transactions (the blockchain)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Tendermint
+
 * The application will be responsible for 
- * Maintaining the UTXO database
- * Validating cryptographic signatures of transactions
- * Preventing transactions from spending non-existent transactions 
- * Allowing clients to query the UTXO database.
+  * Maintaining the UTXO database
+  * Validating cryptographic signatures of transactions
+  * Preventing transactions from spending non-existent transactions 
+  * Allowing clients to query the UTXO database.
 
 </script></section>
 
