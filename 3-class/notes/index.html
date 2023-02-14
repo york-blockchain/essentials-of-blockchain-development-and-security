@@ -204,7 +204,7 @@
 ## Distributed Database Paradigms
 
 * A distributed DB cannot have CAP as there can be two partitions, G1 and G2, of nodes within the system that don’t communicate with each other, and a write query to G1 followed immediately by a read request to G2 will have inconsistent values as G2 will not show the write query to G1
-* DBs can thus (very vaguely) be classified into AP and CP
+* DBs can thus (very vaguely) be classified into AP(available but not consistent under network partitions) and CP(consistent but not available under network partitions)
 
 </script></section>
 
