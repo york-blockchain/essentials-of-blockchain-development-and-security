@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Smart Contracts</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 4: Smart Contracts
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* We saw the technical differences between a blockchain and a DB
+* Learnt of different kinds of distributed databases
+* Learnt how p2p networks work 
+* DHTs: Chord/Kademlia
+* Bitcoin, ETH networking
+* IPFS network
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class plan
+
+* Smart contracting!
+* Review what smart contracts are 
+* DApps
+* Remix: Solidity
+* Local env: Move
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## State
+
+* Sum total of variables in a program at a given snapshot of its execution
+* In blockchain, it represents data on chain (e.g. UTXO on Bitcoin)
+* State transitions are functions that map one state to another state
+* Smart contracts define the logic of state transitions in the blockchain
+* A state machine (in blockchain) is a VM that can represent the state of a collection of programs running on it
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Types of smart contracts
+
+* Smart legal contracts
+ * The "end goal"
+ * Represent constitutional/municipal/etc laws encoded into logic 
+ * Can enable decision making
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## DAOs
+
+* Corporations that have interactions encoded into smart contracts
+* Recall Steemit
+* Open source (e.g. Redhat) has this informally 
+* DAO Hack
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Application Logic
+
+* Contracts you can use to store crucial information in an app 
+* Typically required when there is a trust problem
+* E.g. CryptoBike
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What is a contract anyway?
+
+* "an agreement consisting of a promise and consideration enforceable by law"
+* Informally, a meeting of minds
+* Agreement, execution, enforceability
+8 Smart contract cuts a lot of these steps
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Imperative smart contracts
+
+* Parties come into agreement and clearly define the nature of their agreement
+* Then, a trusted party codes these into agreements
+* Executed and placed into blockchain
+8 Need enforceability
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Imperative smart contracts
+
+![](imperative-sc.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Oracles
+
+* "A means for smart contracts to access data from the world outside the blockchain. A type of smart contract themselves, oracles take data from the outside world and put it into the blockchain for other smart contracts to consume."
+* Representing reality in a digitized format is hard; can compromise depending on the use case (e.g. sports)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Oracles
+
+![](oracle.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## DApps
+
+* Recall networking: traditional App sits on a host and uses horizontal scaling to service requests
+* They combine this with a CDN, etc. To help content delivery using caching
+* Cloud based deployments are further centralizing application deployments
+* Persistent outages
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## DApps
+
+![](centralized.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Dapps
+
+* Decentralized architecture
+* Important events are recorded on chain
+* Other stuff is stored on a decentralized CDN (e.g. Swarm, IPFS, etc.)
+* No owner, no single point of failure
+* Premise:
+ * There is no single company, program, or member that controls the flow of data in the network.
+ * Every participant has access to the data stored in the blockchain through their own node.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Types of Dapps
+
+* TypeI
+ * Supported by their own blockchain - e.g. Bitcoin, Ethereum, EOS, Steem
+* Type II
+ * Dependent on the blockchain of Type 1 DApps. They are primarily driven as protocols and generate tokens to run (like the one we'll make) - e.g. Omni, Golem
+* Type III
+ * Use the protocol of Type 2 DApps to perform their functions
+ * SAFE network, which uses the Omni protocol to issue SafeCoins
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## 15 minute break
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Data Privacy
+
+* Centralized apps control your data
+* They are bound by legislation, but do first and ask for forgiveness later
+* All the Big 5 companies are undergoing/have undergone an anti-trust
+* DApps give control of data back to the user, since they can perform all their interactions anonymously
+ * Barring cryptoforensics
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## 3 Layer Decentralized Architecture
+
+![](web3-architecture.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## 3 Layer Decentralized Architecture
+
+* Smart contract: Allows state to be stored and updated
+* Decentralized storage: allows assets to be stored with high integrity and availability
+* Dynamic communications: Allow Dapps to seamlessly communicate with each other
+* Many solutions exist for these layers
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Solidity
+
+* Created for developing DApps on Ethereum
+* "Solidity is an object-oriented, high-level language for implementing smart contracts. Smart contracts are programs which govern the behavior of accounts within the Ethereum state"
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## OpenZeppelin
+
+* Define smart contract standards
+* In Solidity, they represent interfaces
+* Each token is its own mini-database of who owns what
+* Tokens are variables defined in a smart contract that are written by humans that intend some value assignment
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Solid state solidity
+
+* 
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## ERC-20
+
+* "Fungible" tokens: can be swapped for another asset 
+* Can be broken down into smaller components
+* Token type for things that are money-like
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## ERC-721
+
+* "Fungible" tokens: cannot be swapped for another asset
+* Cannot be broken down into smaller components
+* Token type for things that are like collectibles (e.g. pokemon cards, limited edition things)
+* CryptoKitties
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Move
+
+* Created by Facebook Libra (now Diem) "for secure, sandboxed, and formally verified programming"
+* Not in production and still in experimental stage
+* Move: `let x = y` (C++: `auto x = std::move(y)`)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cardano
+
+* Uses Haskell
+* Functional programming is a safer paradigm
+* Allows one to define compositions for safer usage of state
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Future of DApps
+
+* Autonomous agents
+* Set of smart contracts that automatically perform the role of a business 
+ * e.g. Automated banks, automated taxes
+ * Perfect Oracles
+* DAOs at scale
+ * Buzzword convergence: Quantum-Blockhain-AI
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## References
+
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
