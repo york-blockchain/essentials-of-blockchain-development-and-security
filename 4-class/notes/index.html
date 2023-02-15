@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
 
-    <title>Smart Contracts</title>
+    <title>Introduction to Smart Contracts</title>
 
     <meta name="author" content="Dhruvin Parikh">
 
@@ -86,7 +86,7 @@
 
 ## CSBC 2000 - Essentials of Blockchain Development and Security
 
-### Class 4: Smart Contracts
+### Class 4: Introduction to Smart Contracts
 
 *Dhruvin Parikh*
 
@@ -109,11 +109,10 @@
 
 ## Class plan
 
-* Smart contracting!
+* Light history of smart contracts
 * Review what smart contracts are 
-* DApps
-* Remix: Solidity
-* Local env: Move
+* DApp architecture
+* Deploy contract locally
 
 </script></section>
 
@@ -131,12 +130,137 @@
 
 <section data-markdown><script type="text/template">
 
+## Bitcoin limitations
+
+* Lack of turing completeness
+* Value Blindness
+* Lack of state
+* Blockchain-blindness
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum Stack
+
+* LEVEL 1: ETHEREUM VIRTUAL MACHINE
+* LEVEL 2: SMART CONTRACTS
+* LEVEL 3: ETHEREUM NODES
+* LEVEL 4: ETHEREUM CLIENT APIS
+* LEVEL 5: END-USER APPLICATIONS
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## A short history
+
+* Nick Szabo formalizes concept for Smart contracts in 1994
+* Szabo releases formal paper on Smart Contracts in 1997
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What is a contract anyway?
+
+* "an agreement consisting of a promise and consideration enforceable by law"
+* Informally, a meeting of minds
+* Agreement, execution, enforceability
+* Smart contract cuts a lot of these steps
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Define Smart Contract
+
+*"Smart-contracts are a way for people all across the globe to do business with each other even if they don’t speak the same language or use the same currency.”* - Mihai Alisie, Ethereum Co-founder
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Blockchain2.0 - Smart contract
+
+![](blockchain2.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What is smart contract?
+
+![](what-is-sc.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What is smart contract?
+* Smart contracts help you exchange money, shares or any asset of value in transparent, conflict-free way while avoiding services of a middlemen.
+* Pre-written logic in the form of computer code.
+* Stored and replicated on blockchain.
+* Executed and run by network node running blockchain.
+* Can result to updates to account on ledger.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What makes smart contract desirable?
+
+* Autonomy
+* Trust
+* Redundancy
+* Safety
+* Speed
+* Savings
+* Precision
+* Transparency
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## What makes smart contract desirable?
+
+<img src="desirable-sc.png" width="400">
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## How smart contracts work?
+
+![](how-sc-works.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
 ## Types of smart contracts
 
 * Smart legal contracts
- * The "end goal"
- * Represent constitutional/municipal/etc laws encoded into logic 
- * Can enable decision making
+  * The "end goal"
+  * Represent constitutional/municipal/etc laws encoded into logic 
+  * Can enable decision making
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Traditional versus Smart
+
+![](tc-vs-sc.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Benefits of Smart Contact
+
+* Leverages trust model of the blockchain as smart contract becomes immutable once deployed.
+* EVM provides execution environment for a smart contract bytecode.
+* A smart contract requires a address for itself for invocation which is made by hasing sender’s account address and nonce.
 
 </script></section>
 
@@ -163,16 +287,6 @@
 
 <section data-markdown><script type="text/template">
 
-## What is a contract anyway?
-
-* "an agreement consisting of a promise and consideration enforceable by law"
-* Informally, a meeting of minds
-* Agreement, execution, enforceability
-8 Smart contract cuts a lot of these steps
-</script></section>
-
-<section data-markdown><script type="text/template">
-
 ## Imperative smart contracts
 
 * Parties come into agreement and clearly define the nature of their agreement
@@ -192,6 +306,12 @@
 
 <section data-markdown><script type="text/template">
 
+## 15 minute break
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
 ## Oracles
 
 * "A means for smart contracts to access data from the world outside the blockchain. A type of smart contract themselves, oracles take data from the outside world and put it into the blockchain for other smart contracts to consume."
@@ -203,7 +323,7 @@
 
 ## Oracles
 
-![](oracle.png)
+<img src="oracle.png" width="600" > 
 
 </script></section>
 
@@ -248,15 +368,16 @@
  * Supported by their own blockchain - e.g. Bitcoin, Ethereum, EOS, Steem
 * Type II
  * Dependent on the blockchain of Type 1 DApps. They are primarily driven as protocols and generate tokens to run (like the one we'll make) - e.g. Omni, Golem
-* Type III
- * Use the protocol of Type 2 DApps to perform their functions
- * SAFE network, which uses the Omni protocol to issue SafeCoins
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## 15 minute break
+## Types of Dapps
+
+* Type III
+  * Use the protocol of Type 2 DApps to perform their functions
+  * SAFE network, which uses the Omni protocol to issue SafeCoins
 
 </script></section>
 
@@ -276,7 +397,7 @@
 
 ## 3 Layer Decentralized Architecture
 
-![](web3-architecture.png)
+<img src="web3-architecture.png" width="600">
 
 </script></section>
 
@@ -293,10 +414,38 @@
 
 <section data-markdown><script type="text/template">
 
-## Solidity
+## Smart Contract Use cases 
 
-* Created for developing DApps on Ethereum
-* "Solidity is an object-oriented, high-level language for implementing smart contracts. Smart contracts are programs which govern the behavior of accounts within the Ethereum state"
+![](simple-complex.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Healthcare
+
+![](healthcare.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Real Estate
+
+![](real-estate.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Smart contract programming languages
+
+* Solidity
+* Vyper
+* Cairo
+* Cadence
+* Rust
+* Yul
 
 </script></section>
 
@@ -308,14 +457,6 @@
 * In Solidity, they represent interfaces
 * Each token is its own mini-database of who owns what
 * Tokens are variables defined in a smart contract that are written by humans that intend some value assignment
-
-</script></section>
-
-<section data-markdown><script type="text/template">
-
-## Solid state solidity
-
-* 
 
 </script></section>
 
@@ -376,6 +517,8 @@
 
 ## References
 
+* [Smart Contracts Applications](https://www.edureka.co/blog/smart-contracts/)
+* [Smart Contracts](https://ethereum.org/en/developers/docs/smart-contracts/)
 
 
 </script></section>
