@@ -129,8 +129,7 @@
 * Recall the Byzantine Generals problem
 * Refer to data-in-motion and data-at-rest
 
-![](cia-triad.png)
-
+<img src="cia-triad.png" width="300"> 
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -149,6 +148,13 @@
 
 * Can be compromised by direct attacks designed to gain unauthorized access in order to steal or tamper with data. E.g. MITM, keyloggers, ransomware
  * Can also be violated unintentionally through human error, carelessness, or inadequate security controls.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Confidentiality
+
 * Can be enforced by data classification and labeling; strong access controls and authentication mechanisms; encryption of data in process, in transit, and in storage; steganography; remote wipe capabilities; and adequate education and training for all individuals with access to data
 
 </script></section>
@@ -157,8 +163,7 @@
 
 ## Steganography
 
-![](steganography1.png)
-![](steganography2.png)
+![](steganography1.png) => ![](steganography2.png)
 
 </script></section>
 
@@ -198,8 +203,6 @@
 * Can be compromised by many things, including hardware or software failure, power failure, natural disasters, and human error
 * Can be protected by redundancy (recall horizontal vs vertical scaling), hardware fault tolerance (for servers and storage), regular software patching and system upgrades, backups, comprehensive disaster recovery plans
 
-<img src="hlf-msp.png" width="400">
-
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -229,7 +232,7 @@
 * A good hash is sensitive to extremely minute changes
 * Need to make sure there's no collision
 
-![](checksum.png)
+<img src="checksum.png" width="300">
 
 </script></section>
 
@@ -266,8 +269,6 @@
 * A tree in which every leaf node is labelled with the cryptographic hash of a data block, and every non-leaf node is labelled with the cryptographic hash of the labels of its child nodes
 * Hash trees allow efficient and secure verification of the contents of large data structures
 
-<img src="hlf-world-state.png" width="500">
-
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -288,7 +289,7 @@
  * If they differ, data lacks integrity
 * It's very efficient!
 
-<img src="merkle-root-verification.png" width="500">
+<img src="merkle-root-verification.png" width="200">
 
 </script></section>
 
@@ -299,7 +300,7 @@
 * Merkle root is stored in block header
 * It is calculated from all txs at the time the block is mined
 
-<img src="merkle-tree-blockchain.png" width="600">
+<img src="merkle-tree-blockchain.png" width="300">
 
 </script></section>
 
@@ -311,6 +312,13 @@
 * For example, an attacker can create a new document containing two data blocks, where the first is h(h(0-0)+h(0-1)), and the second is
 hash h(h(1-0)+h(1-1))
 
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
+
+
 <img src="merkle-tree-pre-image-attack.png" width="600">
 
 </script></section>
@@ -321,6 +329,12 @@ hash h(h(1-0)+h(1-1))
 
 * Bitcoin is still vulnerable to this attack!
 * Although it would take significant work to produce a block where the transactions produce hashes which can then be deserialized as valid transactions
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
 
 ![](merkle-tree-second-pre-image-attack.png)
 
@@ -344,8 +358,7 @@ hash h(h(1-0)+h(1-1))
 * When data is inputted, each hash function makes a mark on one of the buckets (uniformly distributed 
 * The buckets after the operation become the signature of the data
 
-![](bloom-filter.png)
-
+<img src="bloom-filter.png" width="300">
 </script></section>
 
 <section data-markdown><script type="text/template">
