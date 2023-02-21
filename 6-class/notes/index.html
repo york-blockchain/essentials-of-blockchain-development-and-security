@@ -71,6 +71,22 @@
         color: red;
         font-weight: bold;
       }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
     </style>
   </head>
 
@@ -226,6 +242,134 @@
 
 <section data-markdown><script type="text/template">
 
+## Principle: Computational Infeasability
+
+* Relied on by all practical cryptography
+* If attackers could try every possible random value, they could crack your crypto-system
+  * Called a "brute force" attack
+* So, we make sure there are so many possible random values that it would take practically forever for them to do so
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hash functions
+
+* The core building block of blockchains
+* Functions that take an unlimited-size input message $m$ and return a fixed size output $h$:
+
+$h = H(m)$
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Preimage-resistance
+
+* Hashing is a "one-way" function
+* If you only know the hash of a secret, it's hard to find that secret
+* Formally: given an arbitrary $h$, it is computationally infeasible to find an $m$ such that $H(m) = h$
+
+</script></section>
+
+
+<!--
+<section data-markdown><script type="text/template">
+
+## Second preimage-resistance
+  
+* Hard to find another message that hashes the same as your message
+* Given $m$, it should be hard to find a distinct $m'$ such that $H(m) = H(m')$
+
+</script></section>
+-->
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 1: Small preimage domain
+
+* Be careful when anonymizing names/IPs/emails/etc by hashing
+* If there aren't that many possible secrets, you can just try all of them
+  
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Exercise: Reversing a hash
+
+* Reverse a hash and discover a secret number.
+```
+f0501dc19c8aa8925e88f6044d49555b575b65b5
+```
+* HINT: The number is less than 1 million.
+* You can do this exercise right here in your browser. Open the console (control-shift-j)
+* Try the number: `sha1("1")`
+* The `sha1` function takes strings, not numbers
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Collision-resistance
+
+* Hard to find any two messages that hash to the same value
+* Formally: Computationally infeasible to find distinct $m$ and $m'$ such that $H(m) = H(m')$
+* We know *all* hash functions have collisions because...
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Collision attacks
+
+* Hash functions are almost always attacked by finding collisions, not specific preimages
+* MD5 and SHA1 are insecure because it is easier than it should be to find collisions
+  * Both are still practically secure against preimage attacks
+* Why is it easier to find collisions?
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 2: Equivalent inputs
+
+    function uniqueUserId(username, accountId) {
+        return sha1(username + accountId);
+    }
+
+`uniqueUserId("john", 234)`
+
+`uniqueUserId("john2", 34)`
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 3: Length extension
+
+* With older hash functions, given a hash you can add data to the end of an unknown preimage and compute a valid hash for it:
+  * MD5, SHA1, SHA2-256
+* Doesn't have this problem:
+  * SHA3, Keccak, BLAKE2, SHA2-512/256, double SHA2-256 (see bitcoin)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
 ## Checksum
 
 * Can help verify integrity of data with a hash
@@ -262,36 +406,315 @@
 
 </script></section>
 
+<section>
+
+<p data-markdown>
+## git
+</p>
+
+<div class="left">
+    <img src="git1.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* git stores a tree of *commits*
+* Each commit is hashed and the hash is its *commit id*
+* Each commit references its parent(s) by their hashes
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<div class="left">
+    <img src="git2.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Suppose somebody knows the root node hash *`f910ba..`* and nothing else
+* Let's say we want to prove to them that the "bugfix!!" commit exists in the tree
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* You send them the highlighted commits and they can re-compute the hash themselves to verify
+* The purple is the node you are proving exists
+* The red nodes are called "witnesses"
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Verification steps
+</p>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right" style="font-size: 80%"><p data-markdown>
+1. Hash the bugfix node and verify the "fix tests" witness node includes this hash
+1. Hash the "fix tests" witness and verify the "merge commit" witness includes this hash
+1. Hash the "merge commit" witness and verify the trusted hash matches this hash
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Note that the verifier never needed any of the grey nodes to verify the proof
+* If a secure hash function is used, there is no way to modify the "bugfix" commit and use it to make a valid proof
+</p></div>
+
+</section>
+
+
+
 <section data-markdown><script type="text/template">
 
-## Merkle Trees
+## Review: Trees
 
-* A tree in which every leaf node is labelled with the cryptographic hash of a data block, and every non-leaf node is labelled with the cryptographic hash of the labels of its child nodes
-* Hash trees allow efficient and secure verification of the contents of large data structures
+<img src="trees.svg" style="background-color: white;" />
 
 </script></section>
 
-<section data-markdown><script type="text/template">
 
-## Merkle Trees
-
-<img src="merkle-trees.png" width="500">
-
-</script></section>
 
 <section data-markdown><script type="text/template">
 
-## Merkle Tree Verification
+## Why trees? Exponential growth
 
-* Verification happens using a given merkle root from a trusted source (e.g. the block header)
- * Get all the data from the untrusted network 
- * Compute the Merkle root from them
- * If they differ, data lacks integrity
-* It's very efficient!
-
-<img src="merkle-root-verification.png" width="200">
+<img src="exponential.svg" style="background-color: white;" />
 
 </script></section>
+ 
+  
+  
+  
+  
+<section data-markdown><script type="text/template">
+
+## Merkle trees
+
+* A merkle tree is a tree where each node references its lower nodes by their hashes
+  * Often simply called a *hash tree*
+* If somebody knows the root node, we can prove that any node exists by providing a **proof**
+  * The proof will include some nodes that the prover isn't interested in but are needed to verify the proof: **witnesses**
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## History of Merkle trees
+
+* Invented by Ralph Merkle in late 70s
+* Original purpose was to implement hash-based signatures
+  * See the [Signatures Made Simple](https://york-blockchain.github.io/fundamentals-of-backend-and-blockchain-development/6-class/notes/index.html#/23) slide from our CSBC1000 course
+  * By using Merkle trees, we can make key-pairs that can sign many messages
+  * Modern hash-based signatures still use merkle trees, ie XMSS: eXtended Merkle Signature Scheme (RFC 8391)
+
+</script></section>
+
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Proof size
+
+* Because of exponential growth, the number of nodes in our tree grows much faster than the number of levels
+  * Each leaf node is a data item
+  * Each level increases our proof size by 1 hash (we need a witness at that level)
+* The number of witnesses required grows according to the *logarithm* of the data items
+  * Proofs can be small, even for huge numbers of nodes
+
+</script></section>
+
+
+
+
+
+
+
+
+<section>
+
+<p data-markdown>
+## Verifiable data-base
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle1.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* A merkle tree is a way of structuring a data-base so it can be verified with proofs
+* Here is a DB with 8 elements in it
+* 3 bit paths required, because:
+  * log2(8) = 3
+</p></div>
+
+</section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+## Proof generation (1/7)
+<img src="merkle2.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (2/7)
+<img src="merkle3.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (3/7)
+<img src="merkle4.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (4/7)
+<img src="merkle5.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (5/7)
+<img src="merkle6.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (6/7)
+<img src="merkle7.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (7/7)
+<img src="merkle8.svg" style="background-color: white;" />
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+## Proof verification (1/6)
+<img src="validation1.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (2/6)
+<img src="validation2.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (3/6)
+<img src="validation3.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (4/6)
+<img src="validation4.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (5/6)
+<img src="validation5.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (6/6)
+<img src="validation6.svg" style="background-color: white;" />
+</script></section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Odd number of items
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* What do you do if you have an odd number of items on a layer?
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Bitcoin bug CVE-2012-2459
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd2.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Bitcoin protocol unconventionally duplicates last item
+* This was a security bug because there are 2 possible DBs with same root:
+* [0,1,2,3,4,5,6]
+* [0,1,2,3,4,5,6,6]
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<p data-markdown>
+## Odd number of items, fixed
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Better approach is to just move the odd node up a level
+* In this case the proof for `6` would use the path `11` and only provide 2 witnesses
+</p></div>
+
+</section>
 
 <section data-markdown><script type="text/template">
 
@@ -383,7 +806,7 @@ hash h(h(1-0)+h(1-1))
 
 ## References
 
-* 
+* [What is a merkle tree](https://decentralizedthoughts.github.io/2020-12-22-what-is-a-merkle-tree/)
 
 </script></section>
 
@@ -418,7 +841,7 @@ hash h(h(1-0)+h(1-1))
         transition: 'none', // none/fade/slide/convex/concave/zoom
 
 	math: {
-          mathjax: '../lib/MathJax/MathJax.js',
+          mathjax: '../../lib/MathJax/MathJax.js',
           config: 'TeX-AMS_SVG-full',
 	},
 
