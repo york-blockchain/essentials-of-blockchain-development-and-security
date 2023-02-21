@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Hashing and merkle trees</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 6: Hashing and merkle trees
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* IAM in blockchains
+* HLF ecosystem
+* Public permissioned, private permissionless
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class Plan
+
+* The CIA Triad
+* Hashing: merkle trees, bloom filters 
+* Applications of hashing in DLT
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Information Security
+
+* Infosec, is the practice of protecting information by mitigating information risks.
+* Typically involves preventing or reducing the probability of unauthorized/inappropriate access to data, or the unlawful use, disclosure, disruption, deletion, corruption, modification, inspection, recording or devaluation of information.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad
+
+* Confidentiality, Integrity, Availability
+* Recall the Byzantine Generals problem
+* Refer to data-in-motion and data-at-rest
+
+<img src="cia-triad.png" width="300"> 
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Confidentiality
+
+* Controlling access to data to prevent unauthorized disclosure
+* Confidential data must be accessible only to those parties that have been granted access to it
+ * Those who are unauthorized are actively prevented from obtaining access
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Confidentiality
+
+* Can be compromised by direct attacks designed to gain unauthorized access in order to steal or tamper with data. E.g. MITM, keyloggers, ransomware
+ * Can also be violated unintentionally through human error, carelessness, or inadequate security controls.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Confidentiality
+
+* Can be enforced by data classification and labeling; strong access controls and authentication mechanisms; encryption of data in process, in transit, and in storage; steganography; remote wipe capabilities; and adequate education and training for all individuals with access to data
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Steganography
+
+![](steganography1.png) => ![](steganography2.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Integrity
+
+* Integrity is about ensuring that data has not been tampered with and, therefore, can be trusted
+* Receiver sees exactly what the sender sends them; nothing more, nothing less
+* E.g. Banking customers need to be able to trust that their banking information and account balances have not been tampered with
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Integrity
+
+* Can be compromised by an attack vector (such as tampering with intrusion detection systems, modifying configuration files, or changing system logs to evade detection) or unintentionally, through human error, lack of care, coding errors, or inadequate policies, procedures, and protection mechanisms
+* Can be secured by checksums, digital certificates, Trusted CAs, intrusion detection systems, auditing, version control
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Availability
+
+* Availability means that networks, systems, and applications are up and running
+* Recall CAP
+* Ensures that authorized users have timely, reliable access to resources when they are needed
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## The CIA Triad: Availability
+
+* Can be compromised by many things, including hardware or software failure, power failure, natural disasters, and human error
+* Can be protected by redundancy (recall horizontal vs vertical scaling), hardware fault tolerance (for servers and storage), regular software patching and system upgrades, backups, comprehensive disaster recovery plans
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## DDoS
+
+![](ddos.png)
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Hashing
+
+* We have some idea of hashing at this point
+* A function that takes any data and gives you unique fingerprint
+* This fingerprint is often called a digest (because it's compression) • Crucial for integrity verification
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Principle: Computational Infeasability
+
+* Relied on by all practical cryptography
+* If attackers could try every possible random value, they could crack your crypto-system
+  * Called a "brute force" attack
+* So, we make sure there are so many possible random values that it would take practically forever for them to do so
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hash functions
+
+* The core building block of blockchains
+* Functions that take an unlimited-size input message $m$ and return a fixed size output $h$:
+
+$h = H(m)$
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Preimage-resistance
+
+* Hashing is a "one-way" function
+* If you only know the hash of a secret, it's hard to find that secret
+* Formally: given an arbitrary $h$, it is computationally infeasible to find an $m$ such that $H(m) = h$
+
+</script></section>
+
+
+<!--
+<section data-markdown><script type="text/template">
+
+## Second preimage-resistance
+  
+* Hard to find another message that hashes the same as your message
+* Given $m$, it should be hard to find a distinct $m'$ such that $H(m) = H(m')$
+
+</script></section>
+-->
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 1: Small preimage domain
+
+* Be careful when anonymizing names/IPs/emails/etc by hashing
+* If there aren't that many possible secrets, you can just try all of them
+  
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Exercise: Reversing a hash
+
+* Reverse a hash and discover a secret number.
+```
+f0501dc19c8aa8925e88f6044d49555b575b65b5
+```
+* HINT: The number is less than 1 million.
+* You can do this exercise right here in your browser. Open the console (control-shift-j)
+* Try the number: `sha1("1")`
+* The `sha1` function takes strings, not numbers
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Collision-resistance
+
+* Hard to find any two messages that hash to the same value
+* Formally: Computationally infeasible to find distinct $m$ and $m'$ such that $H(m) = H(m')$
+* We know *all* hash functions have collisions because...
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Collision attacks
+
+* Hash functions are almost always attacked by finding collisions, not specific preimages
+* MD5 and SHA1 are insecure because it is easier than it should be to find collisions
+  * Both are still practically secure against preimage attacks
+* Why is it easier to find collisions?
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 2: Equivalent inputs
+
+    function uniqueUserId(username, accountId) {
+        return sha1(username + accountId);
+    }
+
+`uniqueUserId("john", 234)`
+
+`uniqueUserId("john2", 34)`
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Hashing mistake 3: Length extension
+
+* With older hash functions, given a hash you can add data to the end of an unknown preimage and compute a valid hash for it:
+  * MD5, SHA1, SHA2-256
+* Doesn't have this problem:
+  * SHA3, Keccak, BLAKE2, SHA2-512/256, double SHA2-256 (see bitcoin)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Checksum
+
+* Can help verify integrity of data with a hash
+* A good hash is sensitive to extremely minute changes
+* Need to make sure there's no collision
+
+<img src="checksum.png" width="300">
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Hash Functions
+
+* How do we ensure collisions don't happen?
+* We need a Cryptographic Hash Function
+* These are extremely resistant to brute-forcing and hence collisions 
+ * This is why you should have long, complex passwords!
+* CHFs have the property of producing seemingly random output for any input, no matter how "close" they are
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Hash Functions
+
+* Some popular CHFs: • MD5 (broken)
+ * SHA1 (broken)
+ * SHA2
+ * SHA3 (Keccak)
+
+
+<img src="hash.png" width="400">
+
+</script></section>
+
+<section>
+
+<p data-markdown>
+## git
+</p>
+
+<div class="left">
+    <img src="git1.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* git stores a tree of *commits*
+* Each commit is hashed and the hash is its *commit id*
+* Each commit references its parent(s) by their hashes
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<div class="left">
+    <img src="git2.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Suppose somebody knows the root node hash *`f910ba..`* and nothing else
+* Let's say we want to prove to them that the "bugfix!!" commit exists in the tree
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* You send them the highlighted commits and they can re-compute the hash themselves to verify
+* The purple is the node you are proving exists
+* The red nodes are called "witnesses"
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Verification steps
+</p>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right" style="font-size: 80%"><p data-markdown>
+1. Hash the bugfix node and verify the "fix tests" witness node includes this hash
+1. Hash the "fix tests" witness and verify the "merge commit" witness includes this hash
+1. Hash the "merge commit" witness and verify the trusted hash matches this hash
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<div class="left">
+    <img src="git3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Note that the verifier never needed any of the grey nodes to verify the proof
+* If a secure hash function is used, there is no way to modify the "bugfix" commit and use it to make a valid proof
+</p></div>
+
+</section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Review: Trees
+
+<img src="trees.svg" style="background-color: white;" />
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Why trees? Exponential growth
+
+<img src="exponential.svg" style="background-color: white;" />
+
+</script></section>
+ 
+  
+  
+  
+  
+<section data-markdown><script type="text/template">
+
+## Merkle trees
+
+* A merkle tree is a tree where each node references its lower nodes by their hashes
+  * Often simply called a *hash tree*
+* If somebody knows the root node, we can prove that any node exists by providing a **proof**
+  * The proof will include some nodes that the prover isn't interested in but are needed to verify the proof: **witnesses**
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## History of Merkle trees
+
+* Invented by Ralph Merkle in late 70s
+* Original purpose was to implement hash-based signatures
+  * See the [Signatures Made Simple](https://york-blockchain.github.io/fundamentals-of-backend-and-blockchain-development/6-class/notes/index.html#/23) slide from our CSBC1000 course
+  * By using Merkle trees, we can make key-pairs that can sign many messages
+  * Modern hash-based signatures still use merkle trees, ie XMSS: eXtended Merkle Signature Scheme (RFC 8391)
+
+</script></section>
+
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Proof size
+
+* Because of exponential growth, the number of nodes in our tree grows much faster than the number of levels
+  * Each leaf node is a data item
+  * Each level increases our proof size by 1 hash (we need a witness at that level)
+* The number of witnesses required grows according to the *logarithm* of the data items
+  * Proofs can be small, even for huge numbers of nodes
+
+</script></section>
+
+
+
+
+
+
+
+
+<section>
+
+<p data-markdown>
+## Verifiable data-base
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle1.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* A merkle tree is a way of structuring a data-base so it can be verified with proofs
+* Here is a DB with 8 elements in it
+* 3 bit paths required, because:
+  * log2(8) = 3
+</p></div>
+
+</section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+## Proof generation (1/7)
+<img src="merkle2.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (2/7)
+<img src="merkle3.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (3/7)
+<img src="merkle4.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (4/7)
+<img src="merkle5.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (5/7)
+<img src="merkle6.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (6/7)
+<img src="merkle7.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof generation (7/7)
+<img src="merkle8.svg" style="background-color: white;" />
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+## Proof verification (1/6)
+<img src="validation1.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (2/6)
+<img src="validation2.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (3/6)
+<img src="validation3.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (4/6)
+<img src="validation4.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (5/6)
+<img src="validation5.svg" style="background-color: white;" />
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Proof verification (6/6)
+<img src="validation6.svg" style="background-color: white;" />
+</script></section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Odd number of items
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* What do you do if you have an odd number of items on a layer?
+</p></div>
+
+</section>
+
+
+
+
+<section>
+
+<p data-markdown>
+## Bitcoin bug CVE-2012-2459
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd2.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Bitcoin protocol unconventionally duplicates last item
+* This was a security bug because there are 2 possible DBs with same root:
+* [0,1,2,3,4,5,6]
+* [0,1,2,3,4,5,6,6]
+</p></div>
+
+</section>
+
+
+
+<section>
+
+<p data-markdown>
+## Odd number of items, fixed
+</p>
+
+<div class="left">
+    <img width="100%" src="merkle-odd3.svg" style="float: left; border:0px; background-color: white" />
+</div>
+
+<div class="right"><p data-markdown>
+* Better approach is to just move the odd node up a level
+* In this case the proof for `6` would use the path `11` and only provide 2 witnesses
+</p></div>
+
+</section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree In Blockchains
+
+* Merkle root is stored in block header
+* It is calculated from all txs at the time the block is mined
+
+<img src="merkle-tree-blockchain.png" width="300">
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
+
+* The Merkle hash root does not indicate the tree depth, enabling a second-preimage attack in which an attacker creates a document other than the original that has the same Merkle hash root
+* For example, an attacker can create a new document containing two data blocks, where the first is h(h(0-0)+h(0-1)), and the second is
+hash h(h(1-0)+h(1-1))
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
+
+
+<img src="merkle-tree-pre-image-attack.png" width="600">
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
+
+* Bitcoin is still vulnerable to this attack!
+* Although it would take significant work to produce a block where the transactions produce hashes which can then be deserialized as valid transactions
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Merkle Tree Second Preimage attack
+
+![](merkle-tree-second-pre-image-attack.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bloom Filter
+
+* A Bloom filter is a space-efficient probabilistic data structure, conceived by Burton Howard Bloom in 1970, that is used to test whether an element is a member of a set
+* False positives are possible, but false negatives are not – in other words, a query returns either "possibly in set" or "definitely not in set"
+* Elements can be added to the set, but not removed; the more items added, the larger the probability of false positives
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bloom Filter
+
+* Have a bunch of hash functions, a number of buckets
+* When data is inputted, each hash function makes a mark on one of the buckets (uniformly distributed 
+* The buckets after the operation become the signature of the data
+
+<img src="bloom-filter.png" width="300">
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bloom Filter
+
+* Can pass this bucket around and get the verification that data belongs in the filter
+* False positive happens when h1 for data1 is set and h2 for data2 is not set but they happen to be the same spot
+* In this case, data2 is given a false positive
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bloom Filter: SPV
+
+* Simplified Payment Verification (SPV) is a method employed by some thin clients within the bitcoin network in order to verify transactions without the requirement to keep an entire copy of the blockchain. As such these thin nodes use bloom filters to specify only the transactions they are interested in receiving updates for
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## References
+
+* [What is a merkle tree](https://decentralizedthoughts.github.io/2020-12-22-what-is-a-merkle-tree/)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
