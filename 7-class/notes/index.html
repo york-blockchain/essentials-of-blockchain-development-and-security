@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Cryptography</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <script src="./sha1.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 7: Cryptography
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* Hashing
+* Merkle Trees
+* Infosec basics (CIA triad)
+* How blockchains use hashing
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class Plan
+
+* Confidentiality/Cryptography 
+* PKI
+* Certificates and CAs
+* Advanced Encryption
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptography
+
+* Cryptography, or cryptology, is the practice and study of techniques for secure communication in the presence of third parties called adversaries
+* kryptós "hidden, secret"; and γράφειν graphein, "to write", or -λογos - logos, "truth"
+* In practice cryptography involves encryption protocol that keep messages private between senders and recipients
+
+<img src="cryptography.png" width="300">
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptography
+
+* Cryptography is science securely communicating in presence of adversarial behavior
+* there are two types of cryptography and therefore encryption
+ * symmetric cryptography
+ * asymmetric cryptography
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptography
+
+* the process of converting data to an unintelligible form to stifle adversaries is called encryption
+* the process of converting that unintelligible data back into its original form for the intended recipient is called decryption
+* encryption protocols often involve the concept of cryptographic keys or just keys which are streams of data generated and utilized in the encryption and decryption processes
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Symmetric Key encryption
+
+* in symmetric key protocols all parties use the same key called the secret key for encryption and decryption of messages thus symmetric key encryption is often called secret key encryption
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Asymmetric Key encryption
+
+* in asymmetric key encryption which blockchains heavily use a computer generates two different keys simultaneously; a private key and a public key
+* the private key is a random 256 bit
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Public-Key Cryptography
+
+* Blockchain uses Assymmetrical cryprography
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## What blockchains use?
+
+* in blockchains elliptical curve cryptography is utilized to then create public keys from private keys
+* the private key is kept hidden by the entity which generated the key pair while the public key is shared with other parties
+* the public key can decrypt any messages encrypted by the private key and the private key can decrypt any messages encrypted by the public key
+* so the private key holder is the only party that can receive and view messages generated by any public key holders
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+* to get an intuitive understanding of how asymmetric cryptography keeps messages private imagine private key holders as owning a locked postage box with a public address
+* only the private key holder can open the box with their key and read the messages within
+* you can imagine the public key as a token with the address of the postage box
+* anyone who has a copy of this token can send messages to the private key holder
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Digital Signatures
+* the practice of sending authenticated messages using asymmetric cryptography is called digital signatures
+* to send a message with a digital signature the private key owner must first create a hash of the message they wish to send then the private key holder encrypts the hash with their private key
+* the message alongside the encrypted hash is sent to a recipient who holds the public key
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Digital Signatures
+* the recipient can then decrypt the hash with their public key hash the original message and compare the hashes
+* if the hashes match the recipient can be assured that the private key owner sent the message
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Impossible vs Hard
+
+* In CS, there are formal ways to describe problems
+* Algorithm = "single-purpose computer" = function
+* Has inputs and an output
+* There are "easy" algorithms and there are "hard" algorithms
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Impossible vs Hard
+
+* Algorithms are modelled by state machines in CS theory
+* They are just like the state machines we encountered (e.g. EVM)
+* Thus, given a set of inputs, 3 things can happen: success, failure, no reply (still processing)
+* Hard problems are in this last category; they take a really, really long time to solve
+
+</script></section>
+
+<section>
+
+<p data-markdown>
+## Impossible vs Hard
+</p>
+
+<div class="left">
+    <img src="impossible-vs-hard.png" style="width:400px;float: left; border:0px; background-color: white" />
+    <p data-markdown>
+    * Algorithms are modelled by state machines in CS theory
+    </p>
+</div>
+
+<div class="right" ><p data-markdown>
+* They are just like the state machines
+* Thus, given a set of inputs, 3 things can happen: success, failure, no reply
+* Hard problems are in this last category; they take a really, really long time to solve
+</p></div>
+
+</section>
+
+<section data-markdown><script type="text/template">
+
+## Impossible vs Hard
+
+* This property of computational hardness can be exploited for security 
+* In fact, we have already seen this in action!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Impossible vs Hard
+
+* As we saw with PoW, SHA256 is 256 bits; to reverse engineer it takes 2^256 back-to-back correct guesses
+* And...
+
+```
+2^256 = 115792089237316195423570985008687907853269984665640564039457584007913129639936
+``` 
+<br/>
+
+* So it's not quite impossible, it's still finite
+* But it's computationally hard
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## P vs NP 
+
+*"If it is easy to check that a solution to a problem is correct, is it also easy to solve the problem? This is the essence of the P vs NP question. Typical of the NP problems is that of the Hamiltonian Path Problem: given N cities to visit, how can one do this without visiting a city twice? If you give me a solution, I can easily check that it is correct. But I cannot so easily find a solution."* - Clay Mathematical Institute
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## P vs NP
+
+* P = the class of problems that can be solved in Polynomial time (= fast)
+* NP = the class of problems that can be verified in polynomial time
+* P is a subset of NP
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## P vs NP
+
+* So if it turns out that P = NP, PoW would cease to work!
+* Luckily all the experts seem to think this is likely not the case
+* However, there are also encryption techniques that cannot be broken even with infinite computational power
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Modular Arithmetic
+
+* Arithmetic where you have a number n such that any mathematical operation mod n will "roll over" past n
+* e.g. 
+ * 1+7 mod 7 = 1 (=7+1) 
+ * 2*8 mod 13 = 3 (=13+3)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## One-time Pad
+
+* "Information-theoretically secure" method of encryption: No way of breaking
+* All the ciphertext looks no different than randomly generated values
+* Works by having a series of random keys
+* One key is chosen and used to encrypt the message using modular addition ((a+b) mod base)
+* Perfectly secure... if the pad is truly random
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Chars as Numbers
+
+<img src="char-as-num.png" width="700"> 
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Diffie-Hellman Key Exchange
+
+* Ralph Merkle, Whitfield Diffie, Martin Hellman, 1976
+* First publication of Public-key based cryptography
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Diffie-Hellman Key Exchange
+
+* How it works:
+  * Alice and Bob agree on a shared key (can be public) 
+  * They each generate a secret key
+  * They each "mix" their secret key and the shared key 
+  * They send each other the mixed result
+  * They apply their secret key on the mixed result and get back their shared secret
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Diffie-Hellman Key Exchange
+
+![](deffie-helman.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## RSA
+
+* Rivest, Shamir, Addleman, 1977
+* Same concept as DH, more elaborate mathematics
+* Abstractly, have a function *gen_keys()* that creates a keypair 
+* One key is public and can be shared with anyone
+* Other key is private and should not be shared
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## RSA
+
+![](rsa.png)
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## RSA Weaknesses
+
+* If the same public key is used for multiple different encoding operations, it becomes harder to crack (since it is deterministic)
+ * In practice, some random padding is used to make the cipher harder to crack
+* Needs very large keys
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## ECDSA
+
+* Uses mathematical properties of elliptic curves to generate keypairs
+* "ECDSA is an asymmetric cryptography algorithm that’s constructed around elliptical curves and an underlying function that’s known as a “trapdoor function.” An elliptic curve represents the set of points that satisfy a mathematical equation (y2 = x3 + ax + b)"
+* More complex to implement than RSA
+* But is much more performant; smaller key sizes
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## ECDSA
+
+![](ecdsa.png)
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## X.509
+
+* X.509 is a standard format for public key certificates, digital documents that securely associate cryptographic key pairs with identities such as websites, individuals, or organizations
+* HTTPS on your browser allows you to see this in action
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## X.509
+
+* Under the hood it's just RSA/ECDSA public key with some extra information
+* It is typically issued by a trusted authority known as a Certificate Authority
+* When an X.509 certificate is signed by a publicly trusted CA, such as SSL.com, the certificate can be used by a third party to verify the identity of the entity presenting it
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+* An organization that's recognized by the internet as a trusted party
+* They issue digital certificates
+* A digital certificate certifies the ownership of a public key by the named subject of the certificate
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+![](ca.png)
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+* E.g. Let's Encrypt
+* Me: "I own the domain abcd.com and this is my public key"
+* LE: "Okay prove you own it by putting this randomly generated file somewhere in your website"
+* Me: "Done, you can find it in challenge.abcd.com"
+* LE: *Checks to see if the data matches*
+* LE: "Okay, you've convinced me. I'll put your public key in a certificate that has my signature so you can tell others that you are verified by me"
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+* CAs come in two flavors: Root CAs and Intermediate CAs
+* Because Root CAs have to securely distribute hundreds of millions of certificates to internet users, it makes sense to spread this process out across what are called Intermediate CAs
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+* These have their certificates issued by the root CA or another intermediate authority, allowing the establishment of a “chain of trust” for any certificate that is issued by any CA in the chain
+* This ability to track back to the Root CA not only allows the function of CAs to scale while still providing security
+* It limits the exposure of the Root CA, which, if compromised, would endanger the entire chain of trust. If an Intermediate CA is compromised, on the other hand, there will be a much smaller exposure.
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Certificate Authority
+
+![](ca1.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Quantum Computing
+
+* All computing systems rely on a fundamental ability to store and manipulate information. Current computers manipulate individual bits, which store information as binary 0 and 1 states
+* Quantum computers leverage quantum mechanical phenomena to manipulate information. To do this, they rely on quantum bits, or qubits.
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Quantum Computing
+
+![](quantum-computing.png)
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Quantum Computation
+
+* Let's look at it this way; if I want to find 3 numbers that you can multiply to get the number 2095264572909, I can run a factorization algorithm that's going to explore various combos of factors
+* With a quantum computer, you can explore various combos of factors at the same time
+* This is known as superposition
+* (How: complex analysis+matrices+probability)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Quantum Computation
+
+* This is bad news for security - since pretty much all the world's security uses the fact that factorization is very difficult
+* Not the end of the world though; there is post-quantum encryption 
+* Lattice-based cryptography
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Homomorphic encryption
+
+* When you have data that's encrypted, we have seen them as ciphertext so far
+* Ciphertext is secure and that's good but we can't really do anything with it
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Homomorphic encryption
+
+* Homomorphic encryption is a form of encryption allowing one to perform calculations on encrypted data without decrypting it first
+* The result of the computation is in an encrypted form, when decrypted the output is the same as if the operations had been performed on the unencrypted data
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## How this all relates to blockchain
+
+* All blockchains fundamentally rely on PKI to function
+* Transactions on the bitcoin blockchain occur (for example) by creating a tx skeleton that needs to be signed
+
+![](tx-skeleton.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Bitcoin Address
+
+
+<img src="btc-keys.png" width="600">
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Ethereum Address
+
+![](ethereum-address.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Homomorphic Encryption: Enigma
+
+* Enigma uses secure, multiparty computation to allow user data to be stored publicly with full privacy
+* “You send whatever data you want, and it runs in the black box and only returns the result. The actual data is never revealed, neither to the outside nor to the computers running the computations inside”
+- Guy Zyskind
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Homomorphic Encryption: Enigma
+
+* Enigma encrypts data by splitting it up into pieces and randomly distributing indecipherable chunks of it to nodes
+* Each node performs calculations on its discrete chunk of information before the user recombines the results to derive an unencrypted answer
+* To keep track of who owns what data - and where any given data's pieces have been distributed - Enigma stores that metadata in the bitcoin blockchain
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Certs: HLF
+
+* Recall the HLF security model
+* Membership Service Providers are created by an organization and allow members to use identities
+
+<img src="cert-hlf.png" width="300">
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Certs: HLF
+
+* The different actors in a blockchain network include peers, orderers, client applications, administrators and more
+* Each of these actors has a digital identity encapsulated in an X.509 digital certificate
+* These identities really matter because they determine the exact permissions over resources and access to information that actors have in a blockchain network.
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## References
+
+* [Cryptographic Truth](https://blog.chain.link/what-is-cryptographic-truth/)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
