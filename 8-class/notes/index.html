@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Blockchain Security</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <script src="./sha1.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 8: Blockchain Security
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* Learnt various cryptography techniques
+* Looked at quantum resistance
+* Saw how these concepts are used in blockchain
+* (almost) saw secure multiparty computation using Enigma
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class Plan
+
+* An overview of blockchain security
+* Smart Contract Security
+ * Threat models, contract interactions
+ * On-chain randomness
+ * Re-entrancy 
+* Major smart contract exploits
+* Full stack security
+* Live walkthrough of DAO exploit
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Financial Attacks: Mixers
+
+* Say Evil Steve successfully exploited a smart contract and steals funds
+* Since everyone can see the transactions publicly, they see his address there and collectively choose to stop trading with him
+* But accounts are cheap to creat in Ethereum; just need to generate an address (keypair) and announce it to the blockchain during a tx
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Financial Attacks: Mixers
+
+* This allows Evil Steve to generate several addresses that he owns and make legitimate transactions on them
+* Once he has accumulated value on those, he can implement a mixer/tumbler to get the value into circulation from the malicious address
+* Through a course of several transactions, the address can make anonymized transactions by mixing them with those of the legitimate accounts
+
+</script></section>
+
+
+<section>
+<p data-markdown>
+## Financial Attacks: Mixers
+</p>
+
+<div class="left">
+    <img src="mixer.png" style="width:300px;float: left; border:0px; background-color: white" />
+    <p data-markdown>
+      * These are extremely hard to perform cryptoforensics on
+    </p>
+</div>
+
+<div class="right" ><p data-markdown>
+* Txs are made from the malicious account to intermediate "mixer" addresses which keep track of all the inputs and randomize outputs
+* Used widely in illegal Bitcoin transactions (Deepweb)
+</p></div>
+
+</section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+* Mempools are where transactions go while they are waiting to be mined into a block
+* Each peer has its own mempool and if it successfully mines a block, it can put transactions into it (based on miner fees) then broadcast it to the network
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+* This can be exploited in certain scenarios
+* MakerDAO: users put ETH or other crypto-assets up as collateral on the Maker platform to then withdraw a portion of the value of those assets in the form of brand-new DAI
+* Works based on a "positive feedback loop"
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+<img src="maker-dao.png" width="600">
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+* On March 12, 2020, there were an unusually high number of very low gas fee txs
+* These were definitely not getting mined, but they prevented other txs from going through
+* “The bots hammered the mempool with transactions that were never intended to be finalized. These ‘Hammerbots’ consumed mempool resources by issuing extremely high rates of replacement transactions without any corresponding increase in gas”
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+* Further, there are bots on Maker known as "Keepers" that maintain collaterallization in the network
+* These bots couldn't get their transactions in to maintain the value of DAI because they did not track the order of pending transactions
+* They could "probabilistically" get transactions in though
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Flooding
+
+* The attackers noticed this bug, and submitted several strong gas fee liquidation transactions with 0 collateral at a rate faster than keepers
+* Enough of these went through that the attackers walked away with $8M, with 0 consequences
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Front-running
+
+* In a trading floor, there's typically a lot of chaos (as we might know from Wolf of Wall Street)
+* In the chaos, people might overhear good intel from a party and then try to make a transaction to exploit it before the original party gets to make it
+* This is termed as "front-running"
+* Since mempool txs are publicly accessible, the info in them can be exploited
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Front-running
+
+* E.g. Evil Steve can see Alice's stock bid in a decentralized exchange mempool and make that same transaction at a higher miner fee
+  * And maybe broadcast it to more nodes than Alice
+* This will let him make the bid before her
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Displacement Front-running
+
+* In the first type of attack, it is not important for Alice’s function call to run after Evil Steve runs his function
+* This attack is commonly performed by increasing the gasPrice higher than network average, often by a multiplier of 10 or more.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Displacement Front-running
+
+* Alice’s can be orphaned or run with no meaningful effect • Examples of displacement include
+  * Alice trying to register a domain name and Mallory registering it first
+  * Alice trying to submit a bug to receive a bounty and Mallory stealing it and submitting it first
+  * Alice trying to submit a bid in an auction and Mallory copying it.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Insertion Front-running
+
+* For this type of attack, it is important to the adversary that the original function call runs after their transaction
+* In an insertion attack, after Evil Steve runs his function, the state of the contract is changed, and he needs Alice’s original function to run on this modified state
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Insertion Front-running
+
+* For example, if Alice places a purchase order on a blockchain asset at a higher price than the best offer, Evil Steve will insert two transactions: he will purchase at the best offer price and then offer the same asset for sale at Alice’s slightly higher purchase price
+* If Alice’s transaction is then run after, Evil Steve will profit on the price difference without having to hold the asset.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Insertion Front-running
+
+* As with displacement attacks, this is usually done by outbidding Alice's transaction in the gas price auction.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Mempool Attacks: Suppression Front-running
+
+* A.k.a Block Stuffing attacks
+* After Evil Steve runs his function, he tries to delay Alice from running her function
+* "The attacker sends multiple transactions with a high gasPrice and gasLimit to custom smart contracts that assert (or use other means) to consume all the gas and fill up the block's gasLimit"
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Smart Contracts in Ethereum
+
+* First are deployed to the blockchain, which occurs when it is mined into a block
+* This block will be the "genesis block" of the smart contract
+* Can be funded with tokens since they have an Eth address
+* Can define what to do with the money sent into it based on code (Solidity logic)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Oops...
+
+<pre class="hljs js">
+contract MyContract {
+    uint256 public myPersonalNumber = 0;
+
+    function changePersonalNumber(uint256 newNum) public {
+        require(msg.sender == 0x1234..., "only I can change this");
+        setPersonalNumber(newNum);
+    }
+
+    function setPersonalNumber(uint256 newNum) <span class="highlightRed">public</span> {
+        myPersonalNumber = newNum;
+    }
+}
+</pre>
+
+* Make sure functions are marked `private`!
+* Don't laugh: A contract with this bug [got hacked and lost $30M](https://blog.zeppelin.solutions/on-the-parity-wallet-multisig-hack-405a8c12e8f7)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Overflows
+
+```
+function addOne(uint256 a) public pure returns(uint256) {
+    return a + 1;
+}
+```
+
+* `addOne()` should always succeed right?
+  * **No**. The output needs to fit into a `uint256`
+  * Adding `1` to the biggest `uint256` value (2<sup>256</sup>-1)
+    * Can't fit in a **uint256**
+    * So the function call will revert (fail)
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Unchecked math
+
+```
+function addOne(uint256 a) public pure returns(uint256) {
+    unchecked {
+        return a + 1;
+    }
+}
+```
+
+* Solidity versions before 0.8 would not fail, and would silently wrap back around to 0
+* Still possible to do this, with `unchecked` blocks
+  * Saves gas but be careful!
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+<img src="rollover.jpg" />
+
+</script></section>
+  
+
+<section data-markdown><script type="text/template">
+
+## Underflows
+
+<pre class="hljs js">
+    uint256 balance;
+
+    function withdraw(uint256 amount) {
+        require(<span class="highlightRed">balance - amount</span> &gt;= 0, "insufficient funds");
+    }
+</pre>
+
+* If `amount` is greater than `balance`, the subtraction underflows
+  * Reverts in Solidity 0.8+, silently wraps before
+* In fact, this require is pointless:
+  * *All* `uint256` values are `>= 0` (that's what unsigned means)
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Numeric ranges
+
+* In general, if values can be controlled by an attacker, make sure you are careful when performing artithmetic on them
+  * Multiplication can also overflow
+    <pre>if (x < 0) x *= -1;</pre>
+    * When `x` is most negative signed integer
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## SafeMath
+
+* You'll see contracts that use `safeAdd`, `safeMul`, and `safeSub`
+* These are functions that check to see if an overflow has been thrown and fail with an `assert` if so:
+
+<pre class="hljs js">
+    function safeAdd(uint256 a, uint256 b)
+                  private pure returns(uint256) {
+        uint c = a + b;
+        assert(c >= a && c >= b);
+        return c;
+    }
+</pre>
+
+* Typically not necessary if using Solidity 0.8+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## 15 minute break
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Threat models
+
+* Model 1: Contract writer is trusted
+  * Must worry about all bugs we've discussed so far (overflows, function visibility, etc)
+* Model 2: Contract writer may be malicious
+  * Must worry about everything in model 1, as well as possibility contract writer added a hidden back-door
+    * *Underhanded* contracts
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Obvious back-door
+
+<pre class="hljs js">
+    function soLongSuckers() public onlyOwner {
+        owner.transfer(address(this).balance);
+    }
+</pre>
+
+<img src="solongsuckers.png" />
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## What about this?
+
+<pre class="hljs js">
+    int256 ownerReward = 1 ether;
+
+    function claimOwnerReward(int256 amount) public onlyOwner {
+        require(amount <= ownerReward, "too much");
+        ownerReward =- amount;
+        owner.transfer(uint(amount));
+    }
+</pre>
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Plausible deniability
+
+<pre class="hljs js">
+    int256 ownerReward = 1 ether;
+
+    function claimOwnerReward(int256 amount) public onlyOwner {
+        require(amount <= ownerReward, "too much");
+        ownerReward <span class="highlightRed">=-</span> amount;
+        owner.transfer(uint(amount));
+    }
+</pre>
+
+* Should be `-=`, not `=-`
+* This bug lets owner steal all ETH in contract
+  * How?
+* If detected beforehand, owner can claim:
+  * *Oops sorry. It was just a typo, I wasn't trying to steal anything, I promise*
+
+</script></section>
+
+
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Autonomous agents
+
+* A contract is an independent entity
+  * Has an ETH balance
+  * Has code, which cannot be changed
+  * Lives forever (unless `selfdestruct`)
+  * Can send and receive ETH
+  * Can call functions in other contracts
+  * Can create other contracts
+* *This is the main reason Ethereum is interesting*
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Contract interactions
+
+* EOA sends ETH to an EOA
+  * Simple value transfer, no code run
+* EOA calls contract
+  * Called contract runs code which can:
+    * Send ETH
+    * Call other contracts
+    * Create contracts
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Contract upgrades
+
+* Some contracts are designed to be *upgradeable*
+  * **Good**: Owner can fix bugs in the contract before bad guys can exploit them
+  * **Bad**: If owner is a bad guy, can add back-doors
+* Because a contract's code cannot be changed, upgradeable contracts are implemented using *proxy contracts* (contracts that call other contracts)
+  * An upgrade changes the contract address that the proxy will call
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Different ways to send ETH
+
+* `address.transfer(amount)`
+  * Throws error on failure
+  * Forwards 2,300 gas
+* `address.send(amount)`
+  * <span class="highlightRed">Returns false on failure</span>
+  * Forwards 2,300 gas
+* `address.call{ value: 1 }("");`
+  * <span class="highlightRed">Returns false on failure</span>
+  * <span class="highlightRed">Forwards all available gas</span>
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Transfer to a contract
+
+* Suppose your contract sends two payouts:
+<pre class="hljs js">
+    addr1.transfer(payout1);
+    addr2.transfer(payout2);
+</pre>
+* If `addr2` is the address of a contract, it could have a fallback function like this:
+<pre class="hljs js">
+    function () {
+        require(false);
+    }
+</pre>
+* So, `addr2` causes whole transaction to fail, including payout to `addr1`
+  * Real-life example: [King of the Ether bug](https://www.kingoftheether.com/postmortem.html)
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Withdrawal pattern
+
+* It is better to record how much is owed to each address:
+<pre class="hljs js">
+    owed[addr1] += payout1;
+    owed[addr2] += payout2;
+</pre>
+* Then let each address withdraw their payouts in separate transactions:
+<pre class="hljs js">
+    function withdraw() public {
+        uint256 amount = owed[msg.sender];
+        owed[msg.sender] = 0;
+        msg.sender.transfer(amount);
+    }
+</pre>
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Interfaces
+
+* An interface is an abstract contract definition that only contains function *signatures*:
+<pre class="hljs js">
+interface VaultInterface {
+    function balance() external view returns(uint256);
+    function deposit() external payable;
+    function withdraw(uint256 amount) external;
+}
+</pre>
+* Then in your contract, you can convert an `address` to the interface and call functions on it:
+<pre class="hljs js">
+    VaultInterface v = VaultInterface(vaultAddr);
+    uint256 myBalance = v.balance();
+    v.deposit.value(1 ether)();
+    v.deposit.gas(2300).value(1 ether)();
+    v.withdraw(1 ether);
+</pre>
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Incorrect interfaces
+
+* Check your interfaces carefully: They need to exactly match what the contract specified
+  * Otherwise you may end up [accidentally calling a fallback function](https://github.com/crytic/not-so-smart-contracts/tree/master/incorrect_interface)
+  * Even `int256` instead of `uint256`
+* Exception: you need to change `public` to `external`
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Single-use contracts
+
+<pre class="hljs js">
+contract SingleUseContract {
+    constructor() public payable {
+
+        // do operations
+
+        <span class="highlight">selfdestruct(msg.sender);</span>
+    }
+}
+</pre>
+
+* Perform operations in a contract's constructor, and then `selfdestruct` when finished
+  * One of the few valid use cases for `selfdestruct`: gas refund for single-use contracts
+* Like a "throw-away account"
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Atomic operations
+
+<pre class="hljs js">
+contract BankFundsMover {
+    constructor(BankInterface bank1, BankInterface bank2) public {  
+        bank1.withdraw(1 ether);
+        bank2.deposit.value(1 ether)();
+
+        selfdestruct(msg.sender);
+    }
+}
+</pre>
+
+* Either **both** the withdrawal and deposit will happen, or **neither** will
+  * Actions execute as an **atomic unit**
+* No other transaction can sneak in between the withdrawal and deposit
+  * Funds will never be outside a bank
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Flash loans
+
+* Some systems allow you to borrow large amounts of ETH/tokens with no collateral, as long as you give back in same transaction
+  * Risk free for the lending system because of atomic transactions
+* Not directly a security threat, but protocols need to assume attackers can present massive amounts of funds
+
+</script></section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Detecting contract callers
+
+* Can we detect if the caller is a contract?
+* Attempt 1 (from [Fomo 3D](https://www.reddit.com/r/ethereum/comments/916xni/how_to_pwn_fomo3d_a_beginners_guide/)):
+<pre class="hljs js">
+    modifier isHuman() {
+      address _addr = msg.sender;
+      uint256 _codeLength;
+
+      assembly {_codeLength := extcodesize(_addr)}
+      require(_codeLength == 0, "sorry humans only");
+      _;
+    }
+</pre>
+
+  * Doesn't work: code size is 0 inside a contract's constructor
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Detecting contract callers (2)
+
+* Attempt 2:
+<pre class="hljs js">  
+    modifier isHuman() {
+      require(tx.origin == msg.sender, "sorry humans only");
+      _;
+    }
+</pre>
+
+  * Works, but:
+    * "Legitimate" contract users cannot use your contract (ex: multi-sig wallets)
+    * Ethereum will eventually get rid of `tx.origin`
+      * Account abstraction
+
+</script></section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## On-chain randomness
+
+* Blockchains are global, deterministic data-structures
+* Generating something unpredictable is impossible
+  * Everybody needs to generate the same value
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Commitment schemes
+
+* All is not lost...
+* There *is* a way to create secure randomness on-chain: *commit-reveal protocol*
+  * Cryptographic protocol for 2 or more parties to come to a consensus on a value they all can agree is random
+  * 2 phases: commit phase, reveal phase
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Commit phase
+
+* Assume two parties: A, B
+* Each generates a secret random value
+  * A generates r<sub>A</sub>
+  * B generates r<sub>B</sub>
+* They exchange hashes of their secrets
+  * A sends H(r<sub>A</sub>) to B
+  * B sends H(r<sub>B</sub>) to A
+* Commit phase ends and reveal phase begins...
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Reveal phase
+
+* They now exchange their random values and verify the hashes
+  * Now that r<sub>B</sub> is public, A computes H(r<sub>B</sub>) and verifies it's same as was received in commit phase
+  * B does the same with r<sub>A</sub>
+* Now that both parties have securely shared r<sub>A</sub> and r<sub>B</sub>, these values are combined into the final output
+  * Ways to combine: xor ($\oplus$), `+`, `H(A . B)`
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Commit-reveal security
+
+* This works because the randomness depends on both r<sub>A</sub> and r<sub>B</sub>
+* Each party needs to commit to their random number before they can see the other random numbers
+* As long as there is sufficient block-time between the commit and reveal phases, miners have no influence
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Failure to reveal
+
+* During the reveal phase, one party will see the other revealed numbers first
+* If this party's outcome is bad, they could choose to not reveal their secret number
+* The punishment for failing to reveal should be at least as bad as a losing outcome
+  * Same for other protocol violations
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Copied commitment
+
+* During the commit phase, one party could submit *the same hash* as the other party
+  * Depending on how the secrets are combined, output may be predictable
+    * $r \oplus r = 0$
+    * $r + r \bmod 2 = 0$
+  * Solution: Use non-predictable combine method, or prevent copied commitments in the protocol
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Zero-Knowledge Proofs
+
+* Imagine there are 2 copies of a photograph and there is a small difference between them
+* I see the difference but you don't
+* How can I prove that I see the difference to you without revealing what the difference is?
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Interactive protocols
+
+* I give you the photos in a particular order
+* You take the photos behind your back and either swap them or not (choose randomly)
+* I tell you whether you swapped them or not
+  * If I'm wrong, I couldn't tell the difference
+  * If I'm right, maybe I could
+* Iterated protocol: Repeat this 1000 times
+  * If I'm right every time you can be pretty sure I can tell the difference
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Re-entrancy
+
+* When a contract calls itself (usually indirectly)
+* If a contract is in the middle of an operation and it unexpectedly starts a new operation, this can be security problem
+* Typical flow:
+  * Contract A calls contract B
+  * Contract B calls *back into* contract A
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Deadlock (pseudo-code)
+
+    let globalLock = false;
+
+    function doOperation(callback) {
+        waitForGlobalLock();
+        globalLock = true;
+
+        let result = doSomeStuff();
+        callback(result);
+
+        globalLock = false;
+    }
+
+Suppose it's called like this:
+
+    doOperation((result) => {
+        doOperation((result) => {
+            console.log("Did 2 operations");
+        });
+    });
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## The DAO
+
+* "Decentralized Autonomous Organization"
+* Basically a corporation, but on the blockchain
+* Was hacked for $50M
+  * Most famous Ethereum security bug
+  * Resulted in Ethereum Classic fork
+  * Bug was due to unanticipated re-entrancy
+
+<img src="dao-attack-news.png" style="width:600px;" />
+</script></section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## The DAO Bug
+
+    function withdraw(uint amount) public {
+        require(balance[msg.sender] >= amount, "no balance");
+        msg.sender.call.value(amount)("");
+        balance[msg.sender] -= amount;
+    }
+
+* As mentioned, `.call` forwards unlimited gas
+  * So, if `msg.sender` is a contract, its fallback function can do lots of stuff
+  * Including calling `withdraw` *again*
+    * Let's walk through what would happen...
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Attack call-stack
+
+<pre class="hljs js">
+Hacker contract: <span class="highlightRed">dao.deposit.value(10)()</span>
+Hacker contract: <span class="highlightRed">dao.withdraw(10)</span>
+        The DAO:   msg.sender.transfer(10)
+Hacker fallback:     <span class="highlightRed">dao.withdraw(10)</span>
+        The DAO:       msg.sender.transfer(10)
+Hacker fallback:         <span class="highlightRed">dao.withdraw(10)</span>
+        The DAO:           msg.sender.transfer(10)
+        The DAO:           balance[msg.sender] -= 10
+        The DAO:       balance[msg.sender] -= 10
+        The DAO:   balance[msg.sender] -= 10
+</pre>
+
+* Hacker deposits 10 but withdraws 30
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Re-entrancy guard
+
+<pre class="hljs js">
+    bool private locked = false;
+
+    modifier nonReentrant() {
+        require(!locked, "re-entrancy detected");
+        locked = true;
+        _;
+        locked = false;
+    }
+</pre>
+
+* Good solution, but adds small amount of gas to each call because the `locked` storage slot needs to be accessed and modified
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Preserve invariants
+
+* Best solution: helps in many ways
+* An invariant is something that should always be true
+* In the DAO example, the invariant is that `balance[msg.sender]` always holds the amount owed to `msg.sender`
+  * Violated: Contract balance was debited but `balance` mapping in storage was not
+* Always leave storage in a consistent state when calling other contracts
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Checks-Effects-Interactions
+
+    function withdraw(uint amount) public {
+        // Checks
+        require(balance[msg.sender] >= amount, "no balance");
+
+        // Effects
+        balance[msg.sender] -= amount;
+
+        // Interactions
+        msg.sender.transfer(amount);
+    }
+
+* Called the [CEI pattern](https://solidity.readthedocs.io/en/latest/security-considerations.html#use-the-checks-effects-interactions-pattern)
+* Note the order of last two operations was swapped from The DAO's version
+
+</script></section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Beware optimizations
+
+* [Serious bug](https://medium.com/@richmcateer_93513/compounds-self-liquidation-bug-829d6571c2df) in Compound money market contract
+* Partially caused by minimizing the number of writes to storage as a gas optimization
+* Always try to preserve invariants in optimized code
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Web security
+
+* dApps are usually websites
+* Almost all the regular web security practices apply
+  * Except user authentication is different
+    * Handling cookies/passwords unnecessary
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Cross-site scripting (XSS)
+
+* One of the most common web security bugs
+* When an attacker's javascript code is run in a user's browser
+* Etherdelta users [lost thousands of dollars](https://hackernoon.com/how-one-hacker-stole-thousands-of-dollars-worth-of-cryptocurrency-with-a-classic-code-injection-a3aba5d2bff0) because of an XSS bug
+  * Users could submit tokens for listing on the site
+  * Token name wasn't sanitized
+
+</script></section>
+  
+  
+  
+  
+<section data-markdown><script type="text/template">
+
+## XSS protections
+
+* Always HTML escape user-supplied content before putting it into an HTML page, or DOM element
+  * `<` becomes `&lt;`
+* Use frameworks like React that provide XSS protection by default
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## SQL injection
+
+* When attacker is able to run SQL statements on your DB because of improper input handling
+<pre class="hljs js">
+db.get('SELECT \* FROM users WHERE userId = ' + req.params.userId);
+</pre>
+What if user passes in the following as a userId:
+<pre class="hljs js">
+1; DROP TABLE users
+</pre>
+Then the DB will execute:
+<pre class="hljs js">
+SELECT \* FROM users WHERE userId = 1; DROP TABLE users
+</pre>
+  * Good-bye users table
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## SQL injection protection
+
+* Instead, use prepared statements:
+<pre class="hljs js">
+db.get('SELECT * FROM users WHERE userId = ?', req.params.userId);
+</pre>
+* Note that this bug is similar to XSS
+  * User input was trusted to be valid and then used in a dangerous way
+
+</script></section>
+
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Short address attack
+
+* Specific to blockchain apps
+  * But same root cause: trusting user input
+* Ethereum addresses are supposed to be 20 bytes (40 hex chars)
+* But if user passed in shorter address, some exchanges mishandled them
+  * [Some exchanges constructed ethereum input data manually](https://vessenes.com/the-erc20-short-address-attack-explained/)
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Short address example
+
+* Suppose an exchange wants to send `0x1234` tokens to a user's address (shown as As)
+* For example using `transfer()` method on ERC20 token
+* Exchange concantenates the fields and sends to a contract as input data
+<pre>
+<span class="highlightGreen">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</span>
+<span class="highlight">0000000000000000000000000000000000000000000000000000000000001234</span>
+</pre>
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Short address example (2)
+
+* If user passes in short address (19 bytes):
+<pre>
+<span class="highlightGreen">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</span><span class="highlight">00</span>
+<span class="highlight">00000000000000000000000000000000000000000000000000000000001234</span><span class="highlightRed">00</span>
+</pre>
+* Attacker has to generate an address ending in `00`
+  * Could use [your vanity address generator](https://github.com/york-blockchain/fundamentals-of-backend-and-blockchain-development/blob/main/6-class/notes/vanity-address.html)
+* Final <span class="highlightRed"><code>00</code></span> is added by ABI decoder in contract
+  * Tricks exchange into sending `0x123400` tokens instead of `0x1234`
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Gas siphoning
+
+* [Some exchanges set a very high gas limit when sending withdrawals](https://drive.google.com/file/d/1mULop1LxHJJy_uzVBdc_xFItN9ck04Jj/view)
+* So you could request a withdrawal to your contract with a fallback function
+<pre class="hljs js">
+  function() external payable {
+      doSomeExpensiveWork();
+  }
+</pre>
+* The exchange would pay for your expensive work, like mining [gas tokens](https://gastoken.io/)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Be careful with input data
+
+* The root cause of all these bugs is mishandling of input data
+* **Trust nothing** that comes from users
+  * They may send stuff you aren't expecting
+* **Sanitize** user data when you receive it
+  * Make sure it only has expected characters, is right length, etc
+* **Escape** user data when you use it
+  * Be careful of the context you use the user data, in case it is misinterpreted
+
+</script></section>
+
+  
+
+<section data-markdown><script type="text/template">
+
+## Front-running
+
+* Before transactions are added to the blockchain, they are shared with all the nodes in the network
+  * They sit in a "mempool" waiting to be mined
+    * Everyone can see them
+* If the transactions contain valuable information, they can be used to create new transactions
+  * Can ensure they are mined before the original transactions by setting high gas price
+    * Miners usually choose highest gas price transactions when making blocks
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Front-running example
+
+<img src="frontrunning.png" />
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Bounty contract
+
+<pre class="hljs js" style="font-size: 45%">
+contract SecretBounty {
+    constructor() public payable {
+    }
+
+    function claimBounty(bytes32 guess) public {
+        require(keccak256(guess) ==
+                0xcb1ca958767e47516505bf9545b02d4f253764255410671dd9ffcd6c8f19984c,
+                "bad guess");
+
+        msg.sender.transfer(address(this).balance);
+    }
+}
+</pre>
+
+* Suppose this contract was loaded with 1000 ETH
+* If you called `claimBounty` with the correct solution, somebody would probably copy your guess and front-run you with a higher gas price
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Front-running solutions
+
+* Impossible to solve completely
+* Similar to on-chain randomness, most solutions use a commitment scheme
+  * `SecretBounty` could be fairer if it let you commit to a hash of the guess, your address, and a random number
+  * Later (say 100 blocks) you would reveal your guess and random number
+  * Smart contract would check commitment
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Off-chain designs
+
+* Sending a transaction to the blockchain results in an update to the blockchain state
+  * This is called an *on-chain* operation
+* To avoid paying gas, and/or to increase speed, dapps try to do various things without transactions
+  * This is known as *off-chain* communication
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## Off-chain orderbooks
+
+* In token exchanges, orders are offers to trade at a certain price
+* Orders are usually distributed off-chain
+* When somebody wants to trade on an order, they submit it to the block-chain
+  * Not every order will be traded on, so better to keep them off-chain to save gas
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Signatures
+
+* In order to create off-chain messages that can be proved to have come from you, your ethereum private key can be used to sign messages
+* A smart contract can verify the signatures on-chain using `ecrecover()`
+  * This is the same functionality that verifies ethereum transactions
+* Only small messages can be signed
+  * Longer messages are hashed and the hash is signed
+
+</script></section>
+
+
+
+
+<section data-markdown><script type="text/template">
+
+## ecrecover
+
+<pre class="hljs js">
+ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s)
+    returns(address)
+</pre>
+
+* *hash*: Hash of the message that was signed
+* *v*, *r*, *s*: These 3 values are the signature
+* Returns an ethereum address
+  * This is the address of who signed the message
+  * This is why you don't need to pass in a public key
+    * It is "recovered" from the signature
+
+</script></section>  
+
+
+<section data-markdown><script type="text/template">
+
+## Signature malleability
+
+* ECDSA is not 100% secure under [EUF model](https://en.wikipedia.org/wiki/Digital_signature_forgery)
+* Anyone who has a valid signature can compute another valid signature for same message:
+<pre class="hljs js" style="font-size: 50%">
+r' = r
+s' = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141 - s
+v' = 0x37 - v
+</pre>
+* Ethereum (and bitcoin) protect against this for transaction signatures
+  * But `ecrecover` doesn't so don't use signatures to prevent replay attacks
+
+</script></section>
+  
+
+<section data-markdown><script type="text/template">
+
+## References
+
+* [Ethereum Smart Contract Security Best Practices](https://consensys.github.io/smart-contract-best-practices/)
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
