@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Blockchain Use Case Modelling - I</title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <script src="./sha1.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 9: Blockchain Use Case Modelling - I
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* InfoSec, CyberSec, cryptography
+* Private, public, consortium blockchains 
+* How blockchains maintain security
+* Hashing
+* Advanced encryption
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## This week
+
+* Use cases
+* Learning the class of problems solved by blockchain
+* Converting business requirements to technical requirements
+* Engineering blockchain systems
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Class Plan
+
+* Understanding blockchain from a business perspective
+* Understanding the current solutions that could be disrupted by blockchain
+* Analyzing traditional transactional systems and their pros/cons
+* Analyzing some existing blockchain systems and their pros/cons
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Traditional Systems
+
+* Use databases to store state
+* Centralized content distribution
+* Centralized data management
+* Trust is required
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Some tech business fundamentals
+
+* 2 kinds of businesses: B2B and B2C
+ * B2B: business-to-business
+ * B2C: business-to-consumer
+* Businesses build products or services
+ * Products deliver some software to solve a problem
+ * Services deliver customized solutions to aid business IP
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Some tech business fundamentals
+
+* SaaS: Software-as-a-service; "software licensing and delivery model in which software is licensed on a subscription basis and is centrally hosted"
+* Some economics ahead
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## B2B
+
+* From a business to another business
+* Use cases: accounting (Quickbooks), sales (Salesforce), analytics (Google SEO), etc
+* Business logic consists of coding business functions
+* Used by employees to increase total factor productivity
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## B2C
+
+* Business-to-Consumer
+* From a business directly to an internet consumer
+* Used to facilitate everyday interactions between internet users
+* Use cases: code collaboration (Github), social networks (LinkedIn), email (Gmail), etc
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Apps
+
+* Serve as means of delivery of business requirements as technical requirements
+* Perform business functions and reduce the cost of everyday business operations
+* Are delivered to customers based on requirements
+* Code for business requirements is typically referred to as business logic
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Server-Client Architecture
+
+![](server-client-architecture.jpg)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Server-Client Architecture
+
+* Users make requests from their browser to a dedicated machine that serves them : server
+* The server performs data management 
+ * Figures out what data  or state to read/write and performs the transaction
+ * Maintains InfoSec
+ * Configured by devs
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Server-Client Architecture: Pros
+
+* Centralized data control
+* Centralized security administration
+* Hierarchical decision-making overhead
+* Fast data clearing (TPS)
+
+</script></section>
+
+<section>
+<p data-markdown>
+## Server-Client Architecture: Cons
+</p>
+
+<div class="left"><p data-markdown>
+* Centralized trust
+* Downtime
+* Security: single point of failure
+* Higher cost of verification
+</p></div>
+
+<div class="right" >
+<img src="outage1.png" style="width:250px;float: left; border:0px; background-color: white" />
+<img src="outage2.png" style="width:300px;float: left; border:0px; background-color: white" />
+<img src="outage3.png" style="width:300px;float: left; border:0px; background-color: white" />
+</div>
+
+</section>
+
+<section data-markdown><script type="text/template">
+
+## Enterprise SaaS
+
+![](saas.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## SaaS in 2021: Serverless
+
+![](saas-serverless.jpg)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## So when do I use Blockchain?
+
+* Is data controlled by only one party/entity in the network?
+* Can we secure all endpoints using just a database?
+* Does the system require security against tampering or alteration?
+* Is there a lack of trust in the network?
+* Is there a need for tracking using provenance?
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Parties
+
+* If you have just one stakeholder, there is no need for a blockchain
+* Blockchain is designed for interoperability and multi-party coordination
+* If data persistence is important, can use a distributed database (which most enterprise DBs are anyway)
+ * Blockchain is a team sport
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Disintermediation
+
+* Disintermediation is the term used to prevent intermediaries in any business process flow
+* Several businesses rely on middlemen that don't really have to be there
+ * E.g. Uber
+* Centralized database-based systems might be an easier fit to avoid distributed transaction processing.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Trust
+
+* Various stakeholders can operate with full freedom without requiring any trust
+* Centralized systems are vulnerable to a lot of malicious activities
+* Multi-party coordination offered by a centralized entity leads to increased risk
+ * If Google becomes evil...
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Trust
+
+* Centralized trust can be abused by 
+* Tampering of existing data (e.g. SolarWinds)
+* Withholding information (e.g. coverups)
+* Reporting inconsistent transactions (e.g. "cooking the books")
+* Providing unauthorized access to data for certain users (e.g. Cambridge Analytica)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Trust Problem
+
+* There are several parties that need to work with each other
+* They cannot trust each other
+* They need a platform to collaborate on work
+* They all need to trust the platform to allow for secure coordination
+* Blockchains solves this in different ways
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Secure Ledger
+
+* All the parties need a single source of truth
+* A malicious party can claim that their source is true
+* Worse, they can collude with the platform maintainer to favor their position
+* Blockchain solves this by providing a permanent, immutable record of all transactions 
+ * The record is always set straight!
+ * Malicious party would immediately and easily be disproved by history of txs
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Virtual Machine Interdependency
+
+* Parties that don't trust each other need to work with each other
+* If the scope of work is not defined, there is no ground truth
+ * Think Statement-of-Work for contractors
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Virtual Machine Interdependency
+
+* A blockchain VM solves this by exactly defining the scope of interactions that parties have with each other
+  * This is reflected in Solidity code for Eth
+  * Parties will not be allowed to change the single source of truth in ways undefined by the Smart Contract
+  * i.e. All state transitions are fully specified
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Token Aligning Incentive
+
+* Some Economics:
+ * First-Price Auction : Digital buying model where if your bid wins, you pay exactly what you bid. This maximizes revenue potential for the seller
+ 
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Token Aligning Incentive
+
+* Some Economics:
+  * Second-Price Auction : Digital buying model where if your bid wins, you pay $0.01 above the second highest bid in the auction. In this type of auction, it is in your best interest to bid the highest amount you are willing to pay, knowing that often you will end up paying less than that amount
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Token Aligning Incentives
+
+
+<img src="token-aligning-incentive.png" width="600">
+
+</script></section>
+  
+
+<section data-markdown><script type="text/template">
+
+## Market Mechanism
+
+* We want all parties to behave in a good way to allow for multi-party coordination
+ * Recall Byzantine Generals problem
+* Stakeholders have obligations that they need to meet
+* Market mechanisms are put in place to ensure that stakeholders perform toward maintaining these obligations
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Blockchain Marketplace Mechanisms
+
+* Tokens issued/staked based on performance
+* Utility token e.g. Filecoin : make sure users provide storage space by giving them tokens
+* Staking e.g. PoS
+* Staking e.g. Escrow
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Blockchain Marketplace Mechanisms
+
+* Multi-User confirmation of performance
+* Currency = History of transactions e.g. Bitcoin
+* Bug bounty programs
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 15 minute break
+</script></section>
+
+<section data-markdown><script type="text/template">
+* Let us look at an [Use Case](https://docs.google.com/presentation/d/1K-wnl0E4viu2OjjlM_02oCWggBpsNHplG_uiPWKHT7g/copy)
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## References
+
+* [Do you need a blockchain?](https://spectrum.ieee.org/do-you-need-a-blockchain)
+* [Remittance Market— Primer and Landscape](https://www.chrismccann.com/essays/remittance-market-primer-and-landscape)
+* [Blockchain in Government and the Public Sector](https://consensys.net/blockchain-use-cases/government-and-the-public-sector/)
+* [When is decentralizing on a blockchain valuable?](https://a16zcrypto.com/when-is-decentralizing-on-a-blockchain-valuable/)
+* [Building it Better: A Simple Guide to Blockchain Use Cases](https://medium.com/blockchain-at-berkeley/building-it-better-a-simple-guide-to-blockchain-use-cases-de494a8f5b60)
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
