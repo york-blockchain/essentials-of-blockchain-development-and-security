@@ -126,7 +126,7 @@
 ## Class Plan
 
 * More use case modelling
-* When to use pub/priv/consortium ledger
+* When to use public/private/consortium ledger
 * Modelling from a technical perspective
 
 
@@ -134,30 +134,30 @@
 
 <section data-markdown><script type="text/template">
 
-## Reminder
+## Revision
 
-* Secure Ledger: single source of truth
-* Virtual Machine Interdependency: Smart contract logic that defines the extent of what actors can do. Anything unsaid is undefined behavior
-* Tokens Aligning Incentives: using staking/value to enforce good behavior and/or punish bad behavior
+* **Secure Ledger** : single source of truth
+* **Virtual Machine Interdependency** : Smart contract logic that defines the extent of what actors can do. Anything unsaid is undefined behavior
+* **Tokens Aligning Incentives** : using staking/value to enforce good behavior and/or punish bad behavior
 
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## Choosing between Public, Private, Consortium
+## Choosing between Public, Private and none
 
-![](choose-blockchain1.jpg)
+<img src="choose-blockchain1.jpg" width="350">
 
 </script></section>
 
 
 <section data-markdown><script type="text/template">
 
-## Choosing between Public, Private, Consortium
+## Choosing between Public, Private and Consortium
 
-![](choose-blockchain2.png)
 
+<img src="choose-blockchain2.png" width="700">
 
 </script></section>
 
@@ -169,7 +169,7 @@
 * Models don't need to be complete (in fact are mathematically proven to not be so)
 * Consist of the following
 
-![](modelling.png)
+<img src="modelling.png" width="1100">
 
 </script></section>
 
@@ -191,6 +191,7 @@
 
 ## Assets
 
+chaincode
 ```
 const cars = [
     {
@@ -201,7 +202,15 @@ const cars = [
     }
 ]
 ```
-
+solidity
+```
+struct Voter {
+  uint weight; // weight is accumulated by delegation
+  bool voted;  // if true, that person already voted
+  address delegate; // person delegated to
+  uint vote;   // index of the voted proposal
+}
+```
 </script></section>
 
 
@@ -223,8 +232,30 @@ async changeCarOwner(ctx, carNumber, newOwner) {
     await ctx.stub.putState(carNumber, Buffer.from(JSON.stringify(car)));
 }
 ```
-
 </script></section>
+
+<section data-markdown><script type="text/template">
+
+## Contract
+
+```
+/// Give your vote (including votes delegated to you)
+/// to proposal `proposals[proposal].name`.
+function vote(uint proposal) public {
+  Voter storage sender = voters[msg.sender];
+  require(sender.weight != 0, "Has no right to vote");
+  require(!sender.voted, "Already voted.");
+  sender.voted = true;
+  sender.vote = proposal;
+
+  // If `proposal` is out of the range of the array,
+  // this will throw automatically and revert all
+  // changes.
+  proposals[proposal].voteCount += sender.weight;
+}
+```
+</script></section>
+
 
 <section data-markdown><script type="text/template">
 
@@ -255,22 +286,37 @@ async changeCarOwner(ctx, carNumber, newOwner) {
 * Asset is always the starting point
 * Blockchain solves the problem of trust for parties working together
  * Parties can be sure that other parties won't act maliciously toward assets
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## How to make a technical model: Asset
+
 * After identifying the asset, attributes can be identified
- * Escrow use case has other attributes than just the house
- * The attributes of the asset will determine the functionality of your transactions
- * Same principle as OOP
+  * Escrow use case has other attributes than just the house
+  * The attributes of the asset will determine the functionality of your transactions
+  * Same principle as OOP
 
 </script></section>
 
 <section data-markdown><script type="text/template">
 
-## How to make a technical model: Tx
+## How to make a technical model: Transaction
 
 * Once you have your asset and its attributes defined, you can define the actions that you want your participants to take
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## How to make a technical model: Transaction
+
 * Again, just like OOP
- * Have your view functions and your modification functions
- * Your business requirements will heavily dictate this part
- * This is where you must make sure to have the smart contract security covered
+  * Have your view functions and your modification functions
+  * Your business requirements will heavily dictate this part
+  * This is where you must make sure to have the smart contract security covered
 
 
 </script></section>
@@ -282,6 +328,14 @@ async changeCarOwner(ctx, carNumber, newOwner) {
 * In private blockchain, organizations in the business network map to peers or nodes in a technical network
 * Every peer or node in the blockchain network contains a copy of the ledger
 * No restriction on the number of nodes an organization can host (since tx consensus is endorsement based)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## How to make a technical model: Business Net
+
 * Smaller organizations or individuals may delegate the responsibility of hosting peers to another larger organization in the network
 * E.g. Pharma company labs
 
@@ -295,6 +349,13 @@ async changeCarOwner(ctx, carNumber, newOwner) {
 * If your use case is public, users you want to participate should be able to invoke the right smart contract functions, e.g. ride share
 * Can also think of it as the right role you want them to play
 * In private blockchains, this is baked in by design as you are operating based on the existing hierarchy of an organization
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## How to make a technical model: Users
+
 * Consortium blockchains need to have the governing member roles defined, which is external (to the blockchain) and can be changed by voting
 
 </script></section>
@@ -305,10 +366,31 @@ async changeCarOwner(ctx, carNumber, newOwner) {
 
 
 <section data-markdown><script type="text/template">
+## Commercial Paper Example
+* Let us take a look in moodle
+![](commercial_paper.webp)
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Class Activity
+
+* Breakout into groups of 4 or 5
+* Time : 1 hour
+* Start modelling a business use case
+ * **Business Case** : define application
+ * **Participants** : stakeholder of application
+ * **Assets** : item transacted in application
+ * **Transactions** : function that transition state of application
+* Present your solution in the class
+</script></section>
+
+
+<section data-markdown><script type="text/template">
 
 ## References
 
-* 
+* [Types of blockchains](https://devopedia.org/types-of-blockchains)
+* [Commercial Paper sample](https://github.com/hyperledger/fabric-samples/tree/master/commercial-paper)
 
 </script></section>
 
