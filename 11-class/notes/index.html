@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <title>Cryptoeconomics    </title>
+
+    <meta name="author" content="Dhruvin Parikh">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="../../reveal.js/css/reveal.css">
+    <link rel="stylesheet" href="../../reveal.js/css/theme/black.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="../../reveal.js/lib/css/zenburn.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? '../../reveal.js/css/print/pdf.css' : '../../reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+    <script src="./sha1.js"></script>
+
+    <!--[if lt IE 9]>
+    <script src="../reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <style>
+      .reveal .slides h1, .reveal .slides h2, .reveal .slides h3 {
+        text-transform: none;
+      }
+
+      .two-column {
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      .two-column em {
+        margin: 20px;
+      }
+
+      .reveal .big-and-bold {
+        font-weight: bold;
+        font-size: 135%;
+      }
+
+      .reveal .shrunk-a-bit {
+        font-size: 90%;
+      }
+
+      .reveal .shrunk-a-bit pre {
+        width: 100%;
+      }
+
+      .reveal pre {
+        width: 100%;
+      }
+
+      .reveal .highlight {
+        color: yellow;
+        font-weight: bold;
+      }
+
+      .reveal .highlightRed {
+        color: red;
+        font-weight: bold;
+      }
+      .left {
+        left:-8.33%;
+        text-align: left;
+        float: left;
+        width:50%;
+        z-index:-10;
+      }
+
+      .right {
+        left:31.25%;
+        top: 75px;
+        text-align: left;
+        float: right;
+        z-index:-10;
+        width:50%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+<!------------------------------------------------------->
+
+
+
+<section data-markdown><script type="text/template">
+
+## CSBC 2000 - Essentials of Blockchain Development and Security
+
+### Class 11: Cryptoeconomics
+
+*Dhruvin Parikh*
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Recap
+
+* Covered technical requirement generation for a blockchain use case
+* Assets, functions, participants
+* When to use public/private/consortium
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Class Plan
+
+* Cryptoeconomics
+* Some cryptoeconomic market mechanisms
+* Cost of verification
+* Cost of networking
+* Maybe code assets into Solidity
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics
+
+* Cryptocurrency+economics
+* Cryptoeconomics is an area of computer science that attempts to solve participant coordination problems in digital ecosystems through cryptography and economic incentives
+* Provides a way to coordinate the behavior of network participants by combining cryptography with economics
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics
+
+* Mechanism that provides a way to align participants’ incentives without the need for trusted third parties: disintermediation
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics
+
+* Recall Byzantine Generals Problem
+* In distributed systems, it is critical for the different actors to reach agreements
+* Before Bitcoin, the assumption was since some of the actors might be unreliable, agreements can never be made, and the network cannot function as intended
+* Bitcoin solves this by disintermediation (currency = history of transactions)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics
+
+* Most crypto networks have been incorporating economic incentives that encourage network participants to behave in certain ways
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics: Crypto
+
+* PKI guarantees attack-resistant access control of one’s token
+* Hashing functions allow nodes to verify transactions that are done over the network
+* Both hashing functions and public-private key cryptography are required for PoW to reward miners for adding truthful transaction blocks to the ledger
+* Cryptoeconomic mechanisms can provide a security equilibrium such that a distributed system is safe against attacks
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics: Assumptions
+
+* Security depends on the strength of assumptions about how people react to economic incentives
+ * How people react to incentives is a field of study in economics
+ * Cryptoeconomics has a lot in common with mechanism design, a field of economics related to game theory (cont.)
+ 
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics: Assumptions
+
+* Game theory analyzes strategic interactions (games); it tries to understand the best strategies for each player, and the likely outcome if both players follow those strategies according to the players’ utilities
+* Mechanism design defines desirable outcomes and works backwards to create a game that incentivize players toward that desired outcome
+* Interdisciplinary, but predominantly developed in the computer science 
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics of Bitcoin Mining
+
+* Goal of Bitcoin is to create a value transfer network that accurately verifies transfers of value, is immutable, censorship-resistant
+ * Achieved by mining
+ * Miners who successfully validate a block of transactions are rewarded in bitcoin
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics of Bitcoin Mining
+
+* Compare this to torrent networks
+  * Does anybody really seed?
+  * Why should I seed after I get my content? Nobody in the torrent network knows who I am
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics of Bitcoin Mining
+
+* Without the hardness of its cryptographic protocol, there would be no secure unit of account with which to reward miners
+* Without the miners, there would be no confidence in the validity of the transaction history of the distributed ledger, unless if it was verified by a trusted third party, which would negate one of the main advantages of Bitcoin
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics of Bitcoin Mining
+
+* Based on cryptoeconomic assumptions, the symbiotic relationship between miners and the Bitcoin network provides confidence
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## PoS
+
+* The point of requiring miners to buy hardware and spend electricity is to impose a cost on miners
+* Want to raise the cumulative cost of attempting a 51 percent attack sufficiently high that it becomes too expensive
+* The idea behind proof-of-stake systems is to use deposits of cryptocurrency to create the same disincentive, rather than real-world investments like hardware and electricity
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## PoS
+
+* In order to mine in a proof-of-stake system, you must commit a certain amount of ether into a smart contract “bond” 
+* This raises the cost of a 51 percent attack – an attacker would have to commit a very large amount of ether to successfully attack the network, which they would then lose forever
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Three-sided Crypto Market
+
+![](three-sided-crypto-market.jpg)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Three-sided Crypto Market
+
+* **Miner** : "works" for the user, gets tokens from the user; provides tokens to the investor, receives liquidity from the investor
+* **Investor** : provides liquidity, receives token; can be short-term or long-term
+* **User** : Receives work from miner, gives token to miner
+* All the participants in such an economy depend on each other to reach their economic goals
+
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* 1 Dai = $1
+* Maker keeps Dai at $1 using a system of collateral and price feeds. This collateral is carefully managed by the MKR token holders
+* MKR holders act as a buyer of last resort
+* Global settlement provides a final layer of safety
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Dai is a token like BTC or ETH
+* However, it has no volatility (relative to USD)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Compare to USDT: hold USD in bank accounts and issue tokens on a blockchain that are ‘backed’ by these dollars
+  * If those bank accounts are frozen or if the accountants defrauded token holders, the stablecoin now becomes an IOU on whatever’s left when they eventually get the bank accounts back
+  * Thus, you have to rely on a middleman, no disintermediation
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Dai is a stablecoin that lives completely on the blockchain chain with its stability unmediated by the legal system or trusted counterparties
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Stablecoins are what allow us to fully realize the promise of blockchain technology
+  * If not, the volatility makes crypto infeasible for daily use
+  * Consumer loans for example, simply cannot be denominated in a currency which fluctuates 10–20% in a day, like bitcoin and ether
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Dai is backed by collateral
+* If you're an ETH holder and want to create DAI, you will send your ETH to a "Collateralized Debt Position" (CDP)
+* CDP is a smart contract
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* You give the Maker CDP smart contract your ether and it lets you take out a loan in Dai
+  * If the value of your ether goes below a certain threshold, you either have to pay back the smart contract as you would a bank or it will auction off your ether to the highest bidder
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* CDPs are simply where the collateral (ether) in the Maker system is held.
+* Once your ether is in the CDP smart contract, you can create Dai
+* The amount of Dai you can create is relative to how much ether you have put into the CDP
+* This ratio is fixed but can be changed over time. Known as collateralize ratio
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Say ETH is worth $100, and collateralize ratio is 150% (150 DAI = 1 ETH)
+* 1 ETH would yield me 66 DAI (100/150)
+* In the Maker system, you don’t lose your ether, but you also no longer control it
+* The ether that you sent to the CDP is stuck there until you pay back the 66 Dai (this destroys the Dai)
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* If ETH-USD appreciates, collateral value increases, and DAI becomes stronger
+* Maker has mechanisms that incentivize users to create more Dai if the price of Dai should trade above one dollar
+* If ETH goes down, value of ether held as collateral is worth less than the amount of Dai it’s supposed to be backing
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Maker combats this by liquidating CDPs and auctioning off the ether inside before the value of the ether is less than the amount of Dai it is backing
+  * n.b. this is where the MKR hack happened
+* The CDP is “liquidated” and the ether inside the CDP is auctioned off for Dai until there is enough Dai to pay back what was extracted from the CDP
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* In case there's a "Black-Swan" event, like a flash crash, price of ether crashes well below the one-to-one collateralization ratio in a time frame too short for the system to handle
+* MKR is another token on the ethereum blockchain (like the rest of the Maker ecosystem) that has governance rights over the Maker smart contracts
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* For instance, the number used in the above examples (the collateralization rate of CDPs) is set by a vote of MKR holders
+* In return for regulating the system, MKR holders are rewarded with fees
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+* Should the collateral in the system not be enough to cover the amount of Dai in existence, MKR is created and sold onto the open market in order to raise the additional collateral
+* This provides a strong incentive for MKR holders to responsibly regulate the parameters at which CDPs can create Dai, as it will ultimately be their money on the line should the system fail, not holders of Dai
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cryptoeconomics examples: Stablecoin
+
+![](oracle.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## 15 minute break
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## Cost of Verification: Current context
+
+* For an exchange to be executed, key attributes of a transaction need to be verified by the parties involved
+* When an exchange takes place in person the buyer can usually directly assess the quality of the goods, and the seller can verify the authenticity of the cash
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+## Cost of Verification: Current context
+
+* When a transaction is performed online instead, one or more financial intermediaries broker it by verifying that the buyer has sufficient funds
+* Intermediaries add value to marketplaces by reducing information asymmetry and the risk of moral hazard through third-party verification
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+## Cost of Verification: Current context
+
+* In exchange for their services, intermediaries typically charge a fee. This is one of the costs buyers and sellers incur when they cannot efficiently verify all the relevant transactioattributes by themselves
+* Additional costs may stem from the intermediary having access to transaction data (a privacy risk), and being able to select which transactions to execute (a censorship risk)
+ * E.g. banks not allowing you to trade crypto
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Current context
+
+* As a large share of economic and social activity is digitized, keeping data secure has become more problematic and information leakage more prevalent
+ * Equifax
+ * Credit card data breach
+ * Cambridge Analytica
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Blockchain
+
+* Blockchain can prevent information leakage by allowing market participants to verify transaction attributes and enforce contracts without exposing the underlying information to a third-party
+* This allows an agent to verify that some piece of information is true (e.g. good credit standing), without full access to all background information (e.g. past transaction records): i.e., the technology allows for the verification of transaction attributes in a privacy-preserving way
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Blockchain
+
+* Blockchain thus allows for costless verification
+* However, the link between “on-chain” activities recorded on a blockchain and “off-chain” events introduces major challenges which cannot be overcome without complementary innovations
+ * e.g. Oracles
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Blockchain
+
+* Information about identity (KYC) is often used to reduce fraud and build robust digital reputation systems, but being able to link an online action and digital record on a blockchain to an offline individual or entity is as expensive with blockchain as it would be with more traditional solutions
+
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Comparison
+
+![](comparision.png)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Comparison
+
+* Trust in the intermediary is replaced with trust in the underlying code and consensus rules
+* These rules define how a distributed network reaches agreement, at regular intervals, about the true state of the shared data it needs to maintain to operate a well-functioning marketplace
+* In more complex applications, the shared data can also cover the rules and data required to perform a specific operation: Smart Contract
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Comparison
+
+* Trusted, independent oracles can also be incorporated to ensure that can respond to market conditions and new information 
+* e.g. to implement a weather derivative, a smart contract can aggregate information across multiple weather sources to assess if a payout has to be made
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: Comparison
+
+* A native cryptocurrency can be used to facilitate low cost transactions of digital resources such as computation (Ethereum), data storage (Filecoin), bandwidth or electricity, as in all these cases verifying the exchange of a resource is not too expensive
+* However, when entries on a shared ledger are digital representations of offline identities, products, services and related transactions, costless verification is difficult to achieve
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Verification: IoT+Blockchain
+
+* The way forward (more in next class) is IoT
+* They can be used to record real-world information (e.g. through sensors, GPS devices) and substitute labor intensive verification with inexpensive hardware
+* Overall, when it comes to strictly on-chain matters, verification goes from being costly, scarce and prone to abuse, to being cheap and reliable.
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* There are several costs incurred while running an economic network
+* B2B, B2C, social networks, government networks
+* E.g. Setting up a supply chain, adding new members, verifying provenance...
+* All this is made easier by having access to a verifiable, immutable, secure shared state
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* The ability to verify state at a lower cost because of the reduction in the cost of verification allows a blockchain protocol to reach consensus about the history and proposed evolution of a digital asset
+* Also allows us to define rules for state transitions that are particularly valuable from a network perspective
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* In the same way that Twitter, because of the 140 character limitation, enabled new forms of communication, the ability to implement costless verification at the level of a single piece of information has the potential to change how information markets, digital property rights and micropayments are designed
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* In other words, this new format emerged from the reduced cost of verification
+* For example, blockchain can be used to incentivize behavior that builds network effects (both in terms of users and applications), ensures the network has sufficient resources available to meet demand, guarantees its security, encourages savings or spending behavior, etc
+* Taken together, these incentives lower the cost of networking, i.e. the cost of bootstrapping, operating and scaling an economic network
+
+</script></section>
+
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking: Private vs Public
+
+* When a blockchain is permissioned, the entities developing it retain control over which participants can update and verify state
+* Transitions are not fully defined by code and self-contained within the system, but rather can be influenced by external parties through fiat
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking: Private vs Public
+
+* As a result, the network will operate under constraints similar to those of traditional digital platforms, and participants will have to trust the platform architect and core constituents through formal and relational contracts, past reputation, etc
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking: Private vs Public
+
+* A permissionless blockchain protocol, instead, allows a network of economic agents to agree, at regular intervals, on the true state of a set of shared data
+* No assignment of rights to trusted entities
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking: Private vs Public
+
+* The flexibility in terms of what such shared data represents across settings (e.g. currency, intellectual property, financial assets, contracts, etc.) makes it a general purpose technology (GPT)
+* GPTs typically take a long time to diffuse through the economy, but also lead to total factor productivity gains across multiple industries
+* e.g. steam engine, electricity, and the internet
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* Overall, relative to blockchain implementations that only take advantage of the reduction in the cost of verification (permissioned), those that also benefit from the reduction in the cost of networking (permissionless ones) are different on at least four dimensions:
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+1. Less likely to leave market power in the hands of their founders or early participants. This limits the ability of any party to unilaterally censor transactions or exclude participants from the network, and removes single points of failure, as the network does not depend on the availability of one or a few key players to operate
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+2.Less reliant on off-chain governance, relational contracts and laws to support their operations
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* By design, to take advantage of the lower cost of networking they need to embed as much as possible of the incentives and governance rules required for their operations on-chain
+
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* Of course, permissionless networks still need off-chain governance and coordination between their key stakeholders to execute a hard fork, imple-ment controversial changes, or respond to an attack, but relative to more closed networks that rely on trusted intermediaries they leave less discretion to any single party and end up codifying more of their rules into their codebases.
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+3.They involve a lower privacy risk, as no single entity (or group of entities) has preferential access to or visibility over the information generated by the network
+* In traditional platforms, the privacy risk is particularly salient in markets where consumers pay for services by allowing intermediaries to access and monetize their data
+* increasingly relevant because of the role such data can play in the training of AI algorithm
+
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+4.Blockchain implementations that take advantage of the lower cost of networking inevitably induce architectural changes in how firms create and capture value within markets 
+* Architectural innovations, by destroying the usefulness of the assets and accumulated knowledge of incumbents, open opportunities for entrants to reshape the dimensions firms compete on, and experiment with new business models
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## Cost of Networking
+
+* This is known as Creative Destruction (Joseph Schumpeter)
+* E.g. the technology offers new ways to reward contributors, allocate rents in a marketplace, and build applications on top of shared data while preserving the privacy of the underlying information
+
+</script></section>
+
+
+<section data-markdown><script type="text/template">
+
+## References
+
+* [SOME SIMPLE ECONOMICS OF THE BLOCKCHAIN](https://www.nber.org/system/files/working_papers/w22952/w22952.pdf)
+
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## End of Class
+
+</script></section>
+
+
+<!------------------------------------------------------->
+
+
+      </div>
+
+    </div>
+
+    <script src="../../reveal.js/lib/js/head.min.js"></script>
+    <script src="../../reveal.js/js/reveal.js"></script>
+    <script src="../../reveal.js/plugin/zoom-js/zoom.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+	math: {
+          mathjax: '../../lib/MathJax/MathJax.js',
+          config: 'TeX-AMS_SVG-full',
+	},
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: '../../reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: '../../reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: '../../reveal.js/plugin/math/math.js', async: true }
+        ]
+      });
+
+    </script>
+
+  </body>
+</html>
