@@ -1,3 +1,6 @@
 [submodule "reveal.js"]
 	path = reveal.js
 	url = https://github.com/hakimel/reveal.js.git
+[submodule "eth-pos-devnet"]
+	path = 1-class/examples/eth-pos-devnet
+	url = https://github.com/OffchainLabs/eth-pos-devnet.git
