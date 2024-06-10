@@ -269,7 +269,7 @@ curl --request GET \
 ```
 
 ### Submission
-* Create a private repository on GitHub on provide read access to `dhruvinparikh`
+* Create a private repository on GitHub and provide read access to `dhruvinparikh`
 * Keep pushing commits to the repo
 * In the class 5 discussion forum, only paste the GitHub repository link.
 * Partial completion is accepted, efforts will be valued.
