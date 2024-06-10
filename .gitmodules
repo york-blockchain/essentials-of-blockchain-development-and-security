@@ -4,3 +4,6 @@
 [submodule "eth-pos-devnet"]
 	path = 1-class/examples/eth-pos-devnet
 	url = https://github.com/OffchainLabs/eth-pos-devnet.git
+[submodule "fabric-samples"]
+	path = 5-class/examples/fabric-samples
+	url = https://github.com/hyperledger/fabric-samples.git
