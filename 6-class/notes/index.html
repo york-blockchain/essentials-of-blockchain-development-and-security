@@ -237,7 +237,8 @@
 
 * We have some idea of hashing at this point
 * A function that takes any data and gives you unique fingerprint
-* This fingerprint is often called a digest (because it's compression) • Crucial for integrity verification
+* This fingerprint is often called a digest (because it's compression)
+* Crucial for integrity verification
 
 </script></section>
 
@@ -263,6 +264,8 @@
 * Functions that take an unlimited-size input message $m$ and return a fixed size output $h$:
 
 $h = H(m)$
+
+* Hash function demo : https://www.fileformat.info/tool/hash.htm
 
 </script></section>
 
@@ -367,6 +370,46 @@ f0501dc19c8aa8925e88f6044d49555b575b65b5
 * Doesn't have this problem:
   * SHA3, Keccak, BLAKE2, SHA2-512/256, double SHA2-256 (see bitcoin)
 
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## SHA3_256 hash demo
+* python
+```
+import hashlib, binascii
+sha3_256hash = hashlib.sha3_256(b'hello').digest()
+print("SHA3-256('hello') =", binascii.hexlify(sha3_256hash))
+```
+* javascript
+```
+const sha3 = require('js-sha3');
+let sha3_256hash = sha3.sha3_256('hello').toString();
+console.log(sha3_256hash);
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## SHA256 hash demo
+```
+import hashlib, binascii
+
+sha256hash = hashlib.sha256(b'hello').digest()
+print("SHA-256('hello') = ", binascii.hexlify(sha256hash))
+```
+</script></section>
+
+<section data-markdown><script type="text/template">
+
+## SHA3_512 hash demo
+
+```
+import hashlib, binascii
+
+sha512hash = hashlib.sha512(b'hello').digest()
+print("SHA-512('hello') = ", binascii.hexlify(sha512hash))
+```
 </script></section>
 
 <section data-markdown><script type="text/template">
@@ -818,7 +861,7 @@ hash h(h(1-0)+h(1-1))
 * [A View of Blockchain Technology From the Information Security Radar](https://www.isaca.org/resources/isaca-journal/issues/2017/volume-4/a-view-of-blockchain-technology-from-the-information-security-radar)
 * [merkletreejs](https://github.com/merkletreejs/merkletreejs)
 * [Attacking Merkle Trees With a Second Preimage Attack](https://flawed.net.nz/2018/02/21/attacking-merkle-trees-with-a-second-preimage-attack/)
-
+* [Practical cryptography for developers](https://cryptobook.nakov.com/)
 </script></section>
 
 <section data-markdown><script type="text/template">
